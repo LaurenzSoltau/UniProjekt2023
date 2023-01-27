@@ -1,10 +1,6 @@
 Map map;
-// Position of player center in level coordinates
-float playerX, playerY;
-// Velocity of player
-float playerVX, playerVY;
-// Speed at which the player moves
-float playerSpeed = 150;
+Player player;
+
 // The player is a circle and this is its radius
 float playerR = 10;
 // Position of the goal center
@@ -17,7 +13,7 @@ boolean showSpecialFunctions=false;
 // used for scrolling
 float screenLeftX, screenTopY;
 //light beam around player
-float brightness = 100;
+float brightness;
 
 float time;
 int GAMEWAIT=0, GAMERUNNING=1, GAMEOVER=2, GAMEWON=3;
@@ -26,69 +22,63 @@ int gameState;
 PImage backgroundImg;
 
 void setup() {
-  size( 500, 500 );
+  size(500, 500);
   newGame ();
 }
 
+// function that starts a new game by creating the map and player object and setting starting position of the player and
+// the position of the goal. Also is sets the gametimer to zero and the state to waiting to wait until player presses a key
 void newGame () {
   map = new Map( "demo.map");
+  player = new Player(150);
+  // loop trhough map pixels and find the starting position
   for ( int x = 0; x < map.w; ++x ) {
     for ( int y = 0; y < map.h; ++y ) {
       // put player at 'S' tile and replace with 'F'
-      if ( map.at(x, y) == 'S' ) {
-        playerX = map.centerXOfTile (x);
-        playerY = map.centerYOfTile (y);
+      if (map.at(x, y) == 'S') {
+        // when startingposition is found, set the position of the player to this position
+        float playerX = map.centerXOfTile(x);
+        float playerY = map.centerYOfTile(y);
+        player.setPlayerX(playerX);
+        player.setPlayerY(playerY);
+        // replace the start tile with a normal floor tile
         map.set(x, y, 'F');
       }
       // put goal at 'E' tile
       if ( map.at(x, y) == 'E' ) {
+        // set goalposition when goal tile is found
         goalX = map.centerXOfTile (x);
         goalY = map.centerYOfTile (y);
       }
     }
   }
   time=0;
-  playerVX = 0;
-  playerVY = 0;
+  player.setPlayerVX(0);
+  player.setPlayerVY(0);
+  brightness = 100;
   gameState = GAMEWAIT;
 }
 
+
 void keyPressed() {
   if ( keyCode == UP) {
-    playerVY = -playerSpeed;
-    playerVX = 0;
+    player.setPlayerVY(-1);
   } else if ( keyCode == DOWN) {
-    playerVY = playerSpeed;
-    playerVX = 0;
+    player.setPlayerVY(1);
   } else if ( keyCode == LEFT) {
-    playerVX = -playerSpeed;
-    playerVY = 0;
+    player.setPlayerVX(-1);
   } else if ( keyCode == RIGHT) {
-    playerVX = playerSpeed;
-    playerVY = 0;
+    player.setPlayerVX(1);
   } else if ( keyCode == 'S' ) showSpecialFunctions = !showSpecialFunctions;
 }
 
-
-void updatePlayer() {
-  // update player
-  float nextX = playerX + playerVX/frameRate,
-    nextY = playerY + playerVY/frameRate;
-  if ( map.testTileInRect( nextX-playerR, nextY-playerR, 2*playerR, 2*playerR, "W" ) ) {
-    playerVX = 0;
-    playerVY = 0;
-    nextX = playerX;
-    nextY = playerY;
+void keyReleased() {
+  if (keyCode == UP || keyCode == DOWN) {
+    player.setPlayerVY(0);
   }
-  if ( map.testTileFullyInsideRect (nextX-playerR, nextY-playerR, 2*playerR, 2*playerR, "H_" ) ) {
-    gameState=GAMEOVER;
+  if (keyCode == RIGHT || keyCode == LEFT) {
+    player.setPlayerVX(0);
   }
-  if ( map.testTileFullyInsideRect (nextX-playerR, nextY-playerR, 2*playerR, 2*playerR, "E" ) ) {
-    gameState=GAMEWON;
-  }
-
-  playerX = nextX;
-  playerY = nextY;
 }
 
 // Maps x to an output y = map(x,xRef,yRef,factor), such that
@@ -105,33 +95,6 @@ void drawMap() {
   map.draw( -screenLeftX, -screenTopY );
 }
 
-
-void drawPlayer() {
-  // draw player
-  noStroke();
-  fill(0, 255, 255);
-  ellipseMode(CENTER);
-  ellipse( playerX - screenLeftX, playerY - screenTopY, 2*playerR, 2*playerR );
-
-  // understanding this is optional, skip at first sight
-  if (showSpecialFunctions) {
-    // draw a line to the next hole
-    Map.TileReference nextHole = map.findClosestTileInRect (playerX-100, playerY-100, 200, 200, "H");
-    stroke(255, 0, 255);
-    if (nextHole!=null) line (playerX-screenLeftX, playerY-screenTopY,
-      nextHole.centerX-screenLeftX, nextHole.centerY-screenTopY);
-
-    // draw line of sight to goal (until next wall) (understanding this is optional)
-    stroke(0, 255, 255);
-    Map.TileReference nextWall = map.findTileOnLine (playerX, playerY, goalX, goalY, "W");
-    if (nextWall!=null)
-      line (playerX-screenLeftX, playerY-screenTopY, nextWall.xPixel-screenLeftX, nextWall.yPixel-screenTopY);
-    else
-      line (playerX-screenLeftX, playerY-screenTopY, goalX-screenLeftX, goalY-screenTopY);
-  }
-}
-
-
 void drawText() {
   textAlign(CENTER, CENTER);
   fill(0, 255, 0);
@@ -141,7 +104,7 @@ void drawText() {
   else if (gameState==GAMEWON) text ("won in "+ round(time) + " seconds", width/2, height/2);
 }
 
-//cone of light around player
+//cone of light around player (around the center of the screen)
 void drawFlashlight() {
   loadPixels();
 
@@ -154,13 +117,13 @@ void drawFlashlight() {
       int loc = x + y*width;
 
       // Get the R G B values from image
-      float r = red  (pixels[loc]);
+      float r = red(pixels[loc]);
       float g = green(pixels[loc]);
-      float b = blue (pixels[loc]);
+      float b = blue(pixels[loc]);
 
 
       // brightness based on players position
-      float distance = dist(x, y, playerX-screenLeftX, playerY-screenTopY);
+      float distance = dist(x, y, player.getPlayerX()-screenLeftX, player.getPlayerY()-screenTopY);
 
       //brightness based on distance from player
       float adjustBrightness = map(distance, 0, brightness, 4, 0);
@@ -185,25 +148,32 @@ void drawFlashlight() {
 
 void draw() {
   if (gameState==GAMERUNNING) {
-    updatePlayer();
+    player.updatePlayer(map);
     time+=1/frameRate;
     //light cone gets smaller over time
-    brightness-=10/frameRate;
+    brightness-=8/frameRate;
     //if light cone is gone gameover
-    if (brightness <= 0) {
+    if (brightness <= 20) {
       gameState = GAMEOVER;
+      // set brightness high so player can see map in gameover screen
+      brightness = 1000;
     }
+    // check if user starts game by pressing spacebar or if he restarts the game
   } else if (keyPressed && key==' ') {
-    if (gameState==GAMEWAIT) gameState=GAMERUNNING;
-    else if (gameState==GAMEOVER || gameState==GAMEWON) newGame();
+    if (gameState==GAMEWAIT) {
+      gameState=GAMERUNNING;
+    } else if (gameState==GAMEOVER || gameState==GAMEWON)
+    {
+      newGame();
+    }
   }
-  screenLeftX = playerX - width/2;
-  screenTopY  = playerY- height/2;
+  screenLeftX = player.getPlayerX() - width/2;
+  screenTopY  = player.getPlayerY()- height/2;
 
   background(0);
 
   drawMap();
-  drawPlayer();
+  player.drawPlayer(screenLeftX, screenTopY, map);
   drawFlashlight();
   drawText();
 }
