@@ -189,7 +189,10 @@ void draw() {
     time+=1/frameRate;
     //light cone gets smaller over time
     brightness-=10/frameRate;
-    
+    //if light cone is gone gameover
+    if (brightness <= 0) {
+      gameState = GAMEOVER;
+    }
   } else if (keyPressed && key==' ') {
     if (gameState==GAMEWAIT) gameState=GAMERUNNING;
     else if (gameState==GAMEOVER || gameState==GAMEWON) newGame();
@@ -198,8 +201,9 @@ void draw() {
   screenTopY  = playerY- height/2;
 
   background(0);
+
   drawMap();
-  drawFlashlight();
   drawPlayer();
+  drawFlashlight();
   drawText();
 }
