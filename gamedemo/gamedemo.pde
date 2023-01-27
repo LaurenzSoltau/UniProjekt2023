@@ -6,8 +6,6 @@ float playerR = 10;
 // Position of the goal center
 // Will be set by restart
 float goalX=0, goalY=0;
-// Whether to illustrate special functions of class Map
-boolean showSpecialFunctions=false;
 
 // left / top border of the screen in map coordinates
 // used for scrolling
@@ -69,7 +67,7 @@ void keyPressed() {
     player.setPlayerVX(-1);
   } else if ( keyCode == RIGHT) {
     player.setPlayerVX(1);
-  } else if ( keyCode == 'S' ) showSpecialFunctions = !showSpecialFunctions;
+  }
 }
 
 void keyReleased() {
@@ -126,10 +124,12 @@ void drawFlashlight() {
       float distance = dist(x, y, player.getPlayerX()-screenLeftX, player.getPlayerY()-screenTopY);
 
       //brightness based on distance from player
+
       float adjustBrightness = map(distance, 0, brightness, 4, 0);
       r *= adjustBrightness;
       g *= adjustBrightness;
       b *= adjustBrightness;
+
 
       // Constrain RGB to between 0 and 255
       r = constrain(r, 0, 255);
@@ -145,10 +145,24 @@ void drawFlashlight() {
   updatePixels();
 }
 
+void checkForEffectTile() {
+  // get current position of the player
+  int playerX = (int) player.getPlayerX();
+  int playerY = (int) player.getPlayerY();
+  if (map.atPixel(playerX, playerY) == 'M') {
+    collectMatchsticks(playerX, playerY);
+  }
+}
+
+void collectMatchsticks(int x, int y) {
+  brightness += 25;
+  map.setPixel(x, y, 'F');
+}
 
 void draw() {
   if (gameState==GAMERUNNING) {
     player.updatePlayer(map);
+    checkForEffectTile();
     time+=1/frameRate;
     //light cone gets smaller over time
     brightness-=8/frameRate;
