@@ -16,6 +16,8 @@ boolean showSpecialFunctions=false;
 // left / top border of the screen in map coordinates
 // used for scrolling
 float screenLeftX, screenTopY;
+//light beam around player
+float brightness = 100;
 
 float time;
 int GAMEWAIT=0, GAMERUNNING=1, GAMEOVER=2, GAMEWON=3;
@@ -139,11 +141,55 @@ void drawText() {
   else if (gameState==GAMEWON) text ("won in "+ round(time) + " seconds", width/2, height/2);
 }
 
+//cone of light around player
+void drawFlashlight() {
+  loadPixels();
+
+
+  // iterate over pixel
+  for (int x = 0; x < width; x++ ) {
+    for (int y = 0; y < height; y++ ) {
+
+      // Calculate position of pixel
+      int loc = x + y*width;
+
+      // Get the R G B values from image
+      float r = red  (pixels[loc]);
+      float g = green(pixels[loc]);
+      float b = blue (pixels[loc]);
+
+
+      // brightness based on players position
+      float distance = dist(x, y, playerX-screenLeftX, playerY-screenTopY);
+
+      //brightness based on distance from player
+      float adjustBrightness = map(distance, 0, brightness, 4, 0);
+      r *= adjustBrightness;
+      g *= adjustBrightness;
+      b *= adjustBrightness;
+
+      // Constrain RGB to between 0 and 255
+      r = constrain(r, 0, 255);
+      g = constrain(g, 0, 255);
+      b = constrain(b, 0, 255);
+
+      // Make a new color and set pixel in the window
+      color c = color(r, g, b);
+      pixels[loc] = c;
+    }
+  }
+
+  updatePixels();
+}
+
 
 void draw() {
   if (gameState==GAMERUNNING) {
     updatePlayer();
     time+=1/frameRate;
+    //light cone gets smaller over time
+    brightness-=10/frameRate;
+    
   } else if (keyPressed && key==' ') {
     if (gameState==GAMEWAIT) gameState=GAMERUNNING;
     else if (gameState==GAMEOVER || gameState==GAMEWON) newGame();
@@ -153,6 +199,7 @@ void draw() {
 
   background(0);
   drawMap();
+  drawFlashlight();
   drawPlayer();
   drawText();
 }
