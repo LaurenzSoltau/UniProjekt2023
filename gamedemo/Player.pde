@@ -44,7 +44,7 @@ class Player {
     playerY = nextY;
   }
 
-  void drawPlayer(float screenLeftX, float screenTopY, Map map) {
+  void drawPlayer(float screenLeftX, float screenTopY) {
     // draw player
     noStroke();
     fill(0, 255, 255);

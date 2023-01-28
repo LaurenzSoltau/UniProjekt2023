@@ -1,5 +1,7 @@
 Map map;
 Player player;
+ArrayList<Enemy> enemies;
+Enemy enemy;
 
 // The player is a circle and this is its radius
 float playerR = 10;
@@ -20,7 +22,7 @@ int gameState;
 PImage backgroundImg;
 
 void setup() {
-  size(500, 500);
+  size(900, 900);
   newGame ();
 }
 
@@ -29,6 +31,7 @@ void setup() {
 void newGame () {
   map = new Map( "demo.map");
   player = new Player(150);
+  enemies = new ArrayList<Enemy>();
   // loop trhough map pixels and find the starting position
   for ( int x = 0; x < map.w; ++x ) {
     for ( int y = 0; y < map.h; ++y ) {
@@ -187,7 +190,7 @@ void draw() {
   background(0);
 
   drawMap();
-  player.drawPlayer(screenLeftX, screenTopY, map);
+  player.drawPlayer(screenLeftX, screenTopY);
   drawFlashlight();
   drawText();
 }
