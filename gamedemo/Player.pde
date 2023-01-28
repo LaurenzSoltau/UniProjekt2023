@@ -3,6 +3,7 @@ class Player {
   private float playerX;
   private float playerY;
 
+  private Map map;
   // verlocity of player in both directions
   private float playerVX;
   private float playerVY;
@@ -12,7 +13,7 @@ class Player {
   private float playerR;
 
 
-  public Player(float playerSpeed) {
+  public Player(float playerSpeed, Map map) {
     // construct a new Player object and set default values. Speed can be set by the parameter.
     this.playerX = 0;
     this.playerY = 0;
@@ -20,10 +21,11 @@ class Player {
     this.playerVY = 0;
     this.playerSpeed = playerSpeed;
     this.playerR = 10;
+    this.map = map;
   }
 
 
-  public void updatePlayer(Map map) {
+  public void updatePlayer() {
     // update player position and returns an Array with the new xPos at index 0 and the yPos at index 1
     float nextX = playerX + playerVX/frameRate,
       nextY = playerY + playerVY/frameRate;

@@ -30,7 +30,7 @@ void setup() {
 // the position of the goal. Also is sets the gametimer to zero and the state to waiting to wait until player presses a key
 void newGame () {
   map = new Map( "demo.map");
-  player = new Player(150);
+  player = new Player(150, map);
   enemies = new ArrayList<Enemy>();
   // loop trhough map pixels and find the starting position
   for ( int x = 0; x < map.w; ++x ) {
@@ -164,7 +164,7 @@ void collectMatchsticks(int x, int y) {
 
 void draw() {
   if (gameState==GAMERUNNING) {
-    player.updatePlayer(map);
+    player.updatePlayer();
     checkForEffectTile();
     time+=1/frameRate;
     //light cone gets smaller over time
