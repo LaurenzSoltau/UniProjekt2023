@@ -51,6 +51,10 @@ void newGame () {
         goalX = map.centerXOfTile (x);
         goalY = map.centerYOfTile (y);
       }
+
+      if (map.at(x, y) == 'G') {
+        enemies.add(new Enemy(150, x, y, 'x', map));
+      }
     }
   }
   time=0;
@@ -148,6 +152,8 @@ void drawFlashlight() {
   updatePixels();
 }
 
+
+
 void checkForEffectTile() {
   // get current position of the player
   int playerX = (int) player.getPlayerX();
@@ -165,6 +171,9 @@ void collectMatchsticks(int x, int y) {
 void draw() {
   if (gameState==GAMERUNNING) {
     player.updatePlayer();
+    for (Enemy enemy : enemies) {
+      enemy.updateEnemy();
+    }
     checkForEffectTile();
     time+=1/frameRate;
     //light cone gets smaller over time
@@ -191,6 +200,9 @@ void draw() {
 
   drawMap();
   player.drawPlayer(screenLeftX, screenTopY);
+  for (Enemy enemy : enemies) {
+    enemy.drawEnemy(screenLeftX, screenTopY);
+  }
   drawFlashlight();
   drawText();
 }
