@@ -3,6 +3,9 @@ class Player {
   private float playerX;
   private float playerY;
 
+  private int lives;
+  public float damageTimer;
+
   private Map map;
   // verlocity of player in both directions
   private float playerVX;
@@ -22,16 +25,20 @@ class Player {
     this.playerSpeed = playerSpeed;
     this.playerR = 10;
     this.map = map;
+    this.lives = 3;
+    this.damageTimer = 0;
   }
 
 
   public void updatePlayer() {
     // update player position and returns an Array with the new xPos at index 0 and the yPos at index 1
+    if (damageTimer >= 0) {
+      damageTimer -= 1/frameRate;
+    }
     float nextX = playerX + playerVX/frameRate,
       nextY = playerY + playerVY/frameRate;
     if ( map.testTileInRect( nextX-playerR, nextY-playerR, 2*playerR, 2*playerR, "W" ) ) {
       playerVX = 0;
-      playerVY = 0;
       nextX = playerX;
       nextY = playerY;
     }
@@ -46,17 +53,31 @@ class Player {
     playerY = nextY;
   }
 
+  void gotHit() {
+    if (damageTimer <= 0) {
+      damageTimer = 1;
+      lives -= 1;
+    }
+  }
   void drawPlayer(float screenLeftX, float screenTopY) {
     // draw player
     noStroke();
     fill(0, 255, 255);
     ellipseMode(CENTER);
-    ellipse( playerX - screenLeftX, playerY - screenTopY, 2*playerR, 2*playerR );
-
-    // understanding this is optional, skip at first sight
+    ellipse(playerX - screenLeftX, playerY - screenTopY, 2*playerR, 2*playerR);
   }
 
   //setter and getter
+  public int getLives() {
+    return this.lives;
+  }
+
+  public float getPlayerR() {
+    return this.playerR;
+  }
+
+
+
   public float getPlayerX() {
     return this.playerX;
   }

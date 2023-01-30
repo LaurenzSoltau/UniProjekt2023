@@ -28,6 +28,27 @@ class Enemy {
     this.map = map;
   }
 
+  public boolean checkCollision(Player player) {
+    float testX = player.getPlayerX();
+    float testY = player.getPlayerY();
+    if (posX < player.getPlayerX()-player.getPlayerR()) {
+      testX = player.getPlayerX()-player.getPlayerR();
+    } else if (posX > player.getPlayerX()+player.getPlayerR()) {
+      testX = player.getPlayerX()+player.getPlayerR();
+    }
+    if (posY < player.getPlayerY()-player.getPlayerR()) {
+      testY = player.getPlayerY()-player.getPlayerR();
+    } else if (posY > player.getPlayerY()+player.getPlayerR()) {
+      testY = player.getPlayerY()+player.getPlayerR();
+    }
+
+    float distance = dist(posX, posY, testX, testY);
+    // collision detected
+    if (distance <= enemyR) {
+      return true;
+    }
+    return false;
+  }
 
   public void updateEnemy() {
     // calculate x and y position in the next frame

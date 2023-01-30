@@ -23,7 +23,7 @@ PImage backgroundImg;
 
 void setup() {
   size(900, 900);
-  newGame ();
+  newGame();
 }
 
 // function that starts a new game by creating the map and player object and setting starting position of the player and
@@ -104,6 +104,7 @@ void drawText() {
   textAlign(CENTER, CENTER);
   fill(0, 255, 0);
   textSize(40);
+  text(player.damageTimer, 100, 100);
   if (gameState==GAMEWAIT) text ("press space to start", width/2, height/2);
   else if (gameState==GAMEOVER) text ("game over", width/2, height/2);
   else if (gameState==GAMEWON) text ("won in "+ round(time) + " seconds", width/2, height/2);
@@ -173,12 +174,20 @@ void draw() {
     player.updatePlayer();
     for (Enemy enemy : enemies) {
       enemy.updateEnemy();
+      if (enemy.checkCollision(player)) {
+        player.gotHit();
+      }
     }
     checkForEffectTile();
     time+=1/frameRate;
     //light cone gets smaller over time
     brightness-=8/frameRate;
     //if light cone is gone gameover
+    if (player.getLives() <= 0) {
+      gameState = GAMEOVER;
+      brightness = 1000;
+    }
+
     if (brightness <= 20) {
       gameState = GAMEOVER;
       // set brightness high so player can see map in gameover screen
