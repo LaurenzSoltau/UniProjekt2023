@@ -4,7 +4,7 @@ class Player {
   private float playerY;
 
   private int lives;
-  public float damageTimer;
+  private float damageTimer;
 
   private Map map;
   // verlocity of player in both directions
@@ -15,6 +15,7 @@ class Player {
   private float playerSpeed;
   private float playerR;
 
+  private color playerColor;
 
   public Player(float playerSpeed, Map map) {
     // construct a new Player object and set default values. Speed can be set by the parameter.
@@ -27,6 +28,7 @@ class Player {
     this.map = map;
     this.lives = 3;
     this.damageTimer = 0;
+    this.playerColor = color(0, 255, 255);
   }
 
 
@@ -34,6 +36,9 @@ class Player {
     // update player position and returns an Array with the new xPos at index 0 and the yPos at index 1
     if (damageTimer >= 0) {
       damageTimer -= 1/frameRate;
+    }
+    if (damageTimer >= 0 && damageTimer <= 0.8) {
+     playerColor = color(0, 255, 255);
     }
     float nextX = playerX + playerVX/frameRate,
       nextY = playerY + playerVY/frameRate;
@@ -58,11 +63,12 @@ class Player {
       damageTimer = 1;
       lives -= 1;
     }
+    playerColor = color(255, 0, 0);
   }
   void drawPlayer(float screenLeftX, float screenTopY) {
     // draw player
     noStroke();
-    fill(0, 255, 255);
+    fill(playerColor);
     ellipseMode(CENTER);
     ellipse(playerX - screenLeftX, playerY - screenTopY, 2*playerR, 2*playerR);
   }

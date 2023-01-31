@@ -3,7 +3,7 @@ Player player;
 ArrayList<Enemy> enemies;
 Enemy enemy;
 
-// The player is a circle and this is its radius
+// The players is a circle and this is its radius
 float playerR = 10;
 // Position of the goal center
 // Will be set by restart
@@ -104,7 +104,7 @@ void drawText() {
   textAlign(CENTER, CENTER);
   fill(0, 255, 0);
   textSize(40);
-  text(player.damageTimer, 100, 100);
+  text(player.getLives(), 100, 100);
   if (gameState==GAMEWAIT) text ("press space to start", width/2, height/2);
   else if (gameState==GAMEOVER) text ("game over", width/2, height/2);
   else if (gameState==GAMEWON) text ("won in "+ round(time) + " seconds", width/2, height/2);
@@ -203,7 +203,7 @@ void draw() {
     }
   }
   screenLeftX = player.getPlayerX() - width/2;
-  screenTopY  = player.getPlayerY()- height/2;
+  screenTopY  = player.getPlayerY() - height/2;
 
   background(0);
 
