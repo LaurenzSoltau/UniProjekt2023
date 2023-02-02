@@ -38,7 +38,7 @@ class Player {
       damageTimer -= 1/frameRate;
     }
     if (damageTimer >= 0 && damageTimer <= 0.8) {
-     playerColor = color(0, 255, 255);
+      playerColor = color(0, 255, 255);
     }
     float nextX = playerX + playerVX/frameRate,
       nextY = playerY + playerVY/frameRate;
@@ -61,9 +61,9 @@ class Player {
   void gotHit() {
     if (damageTimer <= 0) {
       damageTimer = 1;
+      playerColor = color(255, 0, 0);
       lives -= 1;
     }
-    playerColor = color(255, 0, 0);
   }
   void drawPlayer(float screenLeftX, float screenTopY) {
     // draw player
