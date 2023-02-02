@@ -15,8 +15,10 @@ class Player {
   private float playerSpeed;
   private float playerR;
 
+  public PImage playerImg;
 
-  public Player(float playerSpeed, Map map) {
+
+  public Player(PImage playerImg, float playerSpeed, Map map) {
     // construct a new Player object and set default values. Speed can be set by the parameter.
     this.playerX = 0;
     this.playerY = 0;
@@ -27,6 +29,7 @@ class Player {
     this.map = map;
     this.lives = 3;
     this.damageTimer = 0;
+    this.playerImg = playerImg;
   }
 
 
@@ -61,10 +64,10 @@ class Player {
   }
   void drawPlayer(float screenLeftX, float screenTopY) {
     // draw player
-    noStroke();
-    fill(0, 255, 255);
-    ellipseMode(CENTER);
-    ellipse(playerX - screenLeftX, playerY - screenTopY, 2*playerR, 2*playerR);
+    //noStroke();
+    //fill(0, 255, 255);
+    // ellipseMode(CENTER);
+    image(playerImg, playerX - screenLeftX-playerImg.width/2, playerY - screenTopY-playerImg.height/2, playerImg.width, playerImg.height);
   }
 
   //setter and getter

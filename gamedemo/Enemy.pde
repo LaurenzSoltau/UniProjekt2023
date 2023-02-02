@@ -11,12 +11,15 @@ class Enemy {
 
   //speed and radius of the player character
   private float enemyR;
+  
+  public PImage enemyImg; 
 
 
-  public Enemy(float enemySpeed, int spawnX, int spawnY, char direction, Map map) {
+  public Enemy(PImage enemyImg, float enemySpeed, int spawnX, int spawnY, char direction, Map map) {
     // construct a new enemy object and set default values. Speed can be set by the parameter.
     this.posX = spawnX * map.tileSize + map.tileSize/2;
     this.posY = spawnY * map.tileSize + map.tileSize/2;
+    this.enemyImg = enemyImg;
     if (direction == 'x') {
       this.velocityX = enemySpeed;
       this.velocityY = 0;
@@ -67,9 +70,9 @@ class Enemy {
 
   void drawEnemy(float screenLeftX, float screenTopY) {
     // draw player
-    noStroke();
-    fill(255, 0, 0);
+  //  noStroke();
+    //fill(255, 0, 0);
     ellipseMode(CENTER);
-    ellipse( posX - screenLeftX, posY - screenTopY, 2*enemyR, 2*enemyR );
+    image( enemyImg, posX - screenLeftX-enemyImg.width/2, posY - screenTopY-enemyImg.height/2, enemyImg.width, enemyImg.height );
   }
 }
