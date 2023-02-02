@@ -34,20 +34,20 @@ class Enemy {
   public boolean checkCollision(Player player) {
     float testX = player.getPlayerX();
     float testY = player.getPlayerY();
-    if (posX < player.getPlayerX()-player.getPlayerR()) {
-      testX = player.getPlayerX()-player.getPlayerR();
-    } else if (posX > player.getPlayerX()+player.getPlayerR()) {
-      testX = player.getPlayerX()+player.getPlayerR();
+    if (posX < player.getPlayerX()-player.getPlayerX()+playerImg.width/2) {
+      testX = player.getPlayerX()-player.playerImg.width/2;
+    } else if (posX > player.getPlayerX()+player.playerImg.width/2) {
+      testX = player.getPlayerX()+player.playerImg.width/2;
     }
-    if (posY < player.getPlayerY()-player.getPlayerR()) {
-      testY = player.getPlayerY()-player.getPlayerR();
-    } else if (posY > player.getPlayerY()+player.getPlayerR()) {
-      testY = player.getPlayerY()+player.getPlayerR();
+    if (posY < player.getPlayerY()-player.playerImg.height/2) {
+      testY = player.getPlayerY()-player.playerImg.height/2;
+    } else if (posY > player.getPlayerY()+player.playerImg.height/2) {
+      testY = player.getPlayerY()+player.playerImg.height/2;
     }
 
     float distance = dist(posX, posY, testX, testY);
     // collision detected
-    if (distance <= enemyR) {
+    if (distance <= enemyImg.height/2) {
       return true;
     }
     return false;
