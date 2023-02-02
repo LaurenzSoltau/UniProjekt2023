@@ -14,6 +14,7 @@ float goalX=0, goalY=0;
 float screenLeftX, screenTopY;
 //light beam around player
 float brightness;
+float flashlightTimer;
 
 float time;
 int GAMEWAIT=0, GAMERUNNING=1, GAMEOVER=2, GAMEWON=3;
@@ -170,18 +171,14 @@ void collectMatchsticks(int x, int y) {
   map.setPixel(x, y, 'F');
 }
 void collectFlashlight(int x, int y) {
-  
-  float flashlightTimer = 5;
- // brightness = 1000;
- fill(255);
-  text(flashlightTimer, 50,50);
-  if (flashlightTimer > 0 ) {
-    brightness = 1000;
-    flashlightTimer -= 1/frameRate;
-    if (flashlightTimer <= 0) {
-      brightness = 100;
-    }
+
+  flashlightTimer = 5;
+  brightness = 1000;
+
+  if (flashlightTimer <= 0) {
+    brightness = 100;
   }
+
   map.setPixel(x, y, 'F');
 }
 
@@ -199,6 +196,8 @@ void draw() {
     //light cone gets smaller over time
     brightness-=8/frameRate;
     //if light cone is gone gameover
+    flashlightTimer-= 1/frameRate;
+
     if (player.getLives() <= 0) {
       gameState = GAMEOVER;
       brightness = 1000;
@@ -230,4 +229,6 @@ void draw() {
   }
   drawLightcone();
   drawText();
+  fill(255);
+  text(flashlightTimer, 50, 50);
 }
