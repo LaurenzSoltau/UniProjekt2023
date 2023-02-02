@@ -2,6 +2,8 @@ Map map;
 Player player;
 ArrayList<Enemy> enemies;
 Enemy enemy;
+PImage playerImg;
+PImage enemyImg; 
 
 // The players is a circle and this is its radius
 float playerR = 10;
@@ -14,6 +16,8 @@ float goalX=0, goalY=0;
 float screenLeftX, screenTopY;
 //light beam around player
 float brightness;
+float flashlightTimer;
+float saveBrightness;
 
 float time;
 int GAMEWAIT=0, GAMERUNNING=1, GAMEOVER=2, GAMEWON=3;
@@ -23,14 +27,17 @@ PImage backgroundImg;
 
 void setup() {
   size(900, 900);
+   playerImg = loadImage("data/images/player.png");
+   enemyImg = loadImage("data/images/A.png");
   newGame();
+ 
 }
 
 // function that starts a new game by creating the map and player object and setting starting position of the player and
 // the position of the goal. Also is sets the gametimer to zero and the state to waiting to wait until player presses a key
 void newGame () {
   map = new Map( "demo.map");
-  player = new Player(150, map);
+  player = new Player(playerImg, 150, map);
   enemies = new ArrayList<Enemy>();
   // loop trhough map pixels and find the starting position
   for ( int x = 0; x < map.w; ++x ) {
@@ -53,7 +60,7 @@ void newGame () {
       }
 
       if (map.at(x, y) == 'G') {
-        enemies.add(new Enemy(150, x, y, 'x', map));
+        enemies.add(new Enemy(enemyImg,150, x, y, 'x', map));
       }
     }
   }
@@ -111,10 +118,8 @@ void drawText() {
 }
 
 //cone of light around player (around the center of the screen)
-void drawFlashlight() {
+void drawLightcone() {
   loadPixels();
-
-
   // iterate over pixel
   for (int x = 0; x < width; x++ ) {
     for (int y = 0; y < height; y++ ) {
@@ -162,10 +167,24 @@ void checkForEffectTile() {
   if (map.atPixel(playerX, playerY) == 'M') {
     collectMatchsticks(playerX, playerY);
   }
+  if (map.atPixel(playerX, playerY) == 'L') {
+    collectFlashlight(playerX, playerY);
+  }
 }
 
 void collectMatchsticks(int x, int y) {
   brightness += 25;
+  map.setPixel(x, y, 'F');
+}
+void collectFlashlight(int x, int y) {
+  saveBrightness = brightness;
+  flashlightTimer = 5;
+  brightness = 1000;
+
+  if (flashlightTimer <= 0) {
+    brightness = 100;
+  }
+
   map.setPixel(x, y, 'F');
 }
 
@@ -183,6 +202,15 @@ void draw() {
     //light cone gets smaller over time
     brightness-=8/frameRate;
     //if light cone is gone gameover
+    if (flashlightTimer > 0) {
+      flashlightTimer-= 1/frameRate;
+      if (flashlightTimer <= 0) {
+        brightness = saveBrightness;
+      }
+    }
+
+
+
     if (player.getLives() <= 0) {
       gameState = GAMEOVER;
       brightness = 1000;
@@ -208,10 +236,13 @@ void draw() {
   background(0);
 
   drawMap();
+  // image(playerImg, player.playerX - screenLeftX, player.playerY - screenTopY, playerImg.width, playerImg.height);
   player.drawPlayer(screenLeftX, screenTopY);
   for (Enemy enemy : enemies) {
     enemy.drawEnemy(screenLeftX, screenTopY);
   }
-  drawFlashlight();
+  drawLightcone();
   drawText();
+  fill(255);
+  text(flashlightTimer, 50, 50);
 }
