@@ -11,8 +11,8 @@ class Enemy {
 
   //speed and radius of the player character
   private float enemyR;
-  
-  public PImage enemyImg; 
+
+  public PImage enemyImg;
 
 
   public Enemy(PImage enemyImg, float enemySpeed, int spawnX, int spawnY, char direction, Map map) {
@@ -70,7 +70,7 @@ class Enemy {
 
   void drawEnemy(float screenLeftX, float screenTopY) {
     // draw player
-  //  noStroke();
+    //  noStroke();
     //fill(255, 0, 0);
     ellipseMode(CENTER);
     image( enemyImg, posX - screenLeftX-enemyImg.width/2, posY - screenTopY-enemyImg.height/2, enemyImg.width, enemyImg.height );

@@ -3,7 +3,7 @@ Player player;
 ArrayList<Enemy> enemies;
 Enemy enemy;
 PImage playerImg;
-PImage enemyImg; 
+PImage enemyImg;
 
 // The players is a circle and this is its radius
 float playerR = 10;
@@ -27,10 +27,9 @@ PImage backgroundImg;
 
 void setup() {
   size(900, 900);
-   playerImg = loadImage("data/images/player.png");
-   enemyImg = loadImage("data/images/A.png");
+  playerImg = loadImage("data/images/player.png");
+  enemyImg = loadImage("data/images/A.png");
   newGame();
- 
 }
 
 // function that starts a new game by creating the map and player object and setting starting position of the player and
@@ -60,7 +59,7 @@ void newGame () {
       }
 
       if (map.at(x, y) == 'G') {
-        enemies.add(new Enemy(enemyImg,150, x, y, 'x', map));
+        enemies.add(new Enemy(enemyImg, 150, x, y, 'x', map));
       }
     }
   }

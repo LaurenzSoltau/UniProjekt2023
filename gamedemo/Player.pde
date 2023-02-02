@@ -11,6 +11,8 @@ class Player {
   private float playerVX;
   private float playerVY;
 
+  private boolean isTint;
+
   //speed and radius of the player character
   private float playerSpeed;
   private float playerR;
@@ -39,7 +41,8 @@ class Player {
       damageTimer -= 1/frameRate;
     }
     if (damageTimer >= 0 && damageTimer <= 0.8) {
-      playerColor = color(0, 255, 255);
+      isTint = false;
+      // has to be implemented
     }
     float nextX = playerX + playerVX/frameRate,
       nextY = playerY + playerVY/frameRate;
@@ -62,7 +65,7 @@ class Player {
   void gotHit() {
     if (damageTimer <= 0) {
       damageTimer = 1;
-      playerColor = color(255, 0, 0);
+      isTint = true;
       lives -= 1;
     }
   }
@@ -71,6 +74,11 @@ class Player {
     //noStroke();
     //fill(0, 255, 255);
     // ellipseMode(CENTER);
+    if (isTint) {
+      tint(255, 0, 0);
+    } else {
+      noTint();
+    }
     image(playerImg, playerX - screenLeftX-playerImg.width/2, playerY - screenTopY-playerImg.height/2, playerImg.width, playerImg.height);
   }
 
