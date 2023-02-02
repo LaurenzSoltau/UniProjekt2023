@@ -196,7 +196,14 @@ void draw() {
     //light cone gets smaller over time
     brightness-=8/frameRate;
     //if light cone is gone gameover
-    flashlightTimer-= 1/frameRate;
+    if (flashlightTimer > 0) {
+      flashlightTimer-= 1/frameRate;
+      if (flashlightTimer <= 0) {
+        brightness = 100;
+      }
+    }
+
+
 
     if (player.getLives() <= 0) {
       gameState = GAMEOVER;
