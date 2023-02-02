@@ -111,10 +111,8 @@ void drawText() {
 }
 
 //cone of light around player (around the center of the screen)
-void drawFlashlight() {
+void drawLightcone() {
   loadPixels();
-
-
   // iterate over pixel
   for (int x = 0; x < width; x++ ) {
     for (int y = 0; y < height; y++ ) {
@@ -162,10 +160,28 @@ void checkForEffectTile() {
   if (map.atPixel(playerX, playerY) == 'M') {
     collectMatchsticks(playerX, playerY);
   }
+  if (map.atPixel(playerX, playerY) == 'L') {
+    collectFlashlight(playerX, playerY);
+  }
 }
 
 void collectMatchsticks(int x, int y) {
   brightness += 25;
+  map.setPixel(x, y, 'F');
+}
+void collectFlashlight(int x, int y) {
+  
+  float flashlightTimer = 5;
+ // brightness = 1000;
+ fill(255);
+  text(flashlightTimer, 50,50);
+  if (flashlightTimer > 0 ) {
+    brightness = 1000;
+    flashlightTimer -= 1/frameRate;
+    if (flashlightTimer <= 0) {
+      brightness = 100;
+    }
+  }
   map.setPixel(x, y, 'F');
 }
 
@@ -212,6 +228,6 @@ void draw() {
   for (Enemy enemy : enemies) {
     enemy.drawEnemy(screenLeftX, screenTopY);
   }
-  drawFlashlight();
+  drawLightcone();
   drawText();
 }
