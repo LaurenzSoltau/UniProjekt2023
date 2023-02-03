@@ -4,6 +4,13 @@ ArrayList<Enemy> enemies;
 Enemy enemy;
 PImage playerImg;
 PImage enemyImg;
+//NEED FOR HIGHSCORE
+/*
+String nameOfPlayer = "";
+String cacheNameOfPlayer = "";
+
+Table highscore;
+*/
 
 // The players is a circle and this is its radius
 float playerR = 10;
@@ -30,6 +37,11 @@ void setup() {
   playerImg = loadImage("data/images/player.png");
   enemyImg = loadImage("data/images/A.png");
   newGame();
+  //NEED FOR HIGHSCORE
+  /*
+  highscore = new Table();
+  highscore.addColumn("name");
+  highscore.addColumn("time");*/
 }
 
 // function that starts a new game by creating the map and player object and setting starting position of the player and
@@ -156,8 +168,42 @@ void drawLightcone() {
 
   updatePixels();
 }
+//------ vvvv HIGHSCORE TABLE  UNDER THIS LINE vvvv---------------------------------------
+/*void drawHighscore() {
+  TableRow row = highscore.addRow();
+  nameOfPlayer(nameOfPlayer);
+  row.setString("name", nameOfPlayer);
+  row.setInt("time", round(time));
+
+  highscore.sort("time");
 
 
+  if (highscore.getRowCount() > 5) {
+    highscore.removeRow(highscore.getRowCount());
+  }
+  int rowCount = 0;
+ int textPosition = 200;
+  for (TableRow rows : highscore.rows()) {
+ text(rows.getString("name"), 50, textPosition);
+    text(rows.getInt("time"), 150, textPosition);
+    textPosition += 50;
+    rowCount++;
+  }
+  saveTable(highscore, "data/new.csv");
+}
+
+String nameOfPlayer(String nameOfPlayer) {
+  if (keyPressed && key == '\n' ) {
+    cacheNameOfPlayer = nameOfPlayer;
+
+    nameOfPlayer = "";
+  } else if (keyPressed) {
+
+    nameOfPlayer = nameOfPlayer + key;
+  }
+  return nameOfPlayer;
+}*/
+//-------------HIGHSCORE TABLE ABOVE THIS LINE -------------------
 
 void checkForEffectTile() {
   // get current position of the player
