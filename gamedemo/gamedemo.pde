@@ -7,10 +7,10 @@ PImage enemyImg;
 //NEED FOR HIGHSCORE
 /*
 String nameOfPlayer = "";
-String cacheNameOfPlayer = "";
-
-Table highscore;
-*/
+ String cacheNameOfPlayer = "";
+ 
+ Table highscore;
+ */
 
 // The players is a circle and this is its radius
 float playerR = 10;
@@ -25,9 +25,11 @@ float screenLeftX, screenTopY;
 float brightness;
 float flashlightTimer;
 float saveBrightness;
+float helpTimer;
+float startTimer;
 
 float time;
-int GAMEWAIT=0, GAMERUNNING=1, GAMEOVER=2, GAMEWON=3;
+int START=0, GAMERUNNING=1, GAMEOVER=2, GAMEWON=3, HELP=4, HIGHSCORES=5;
 int gameState;
 
 PImage backgroundImg;
@@ -40,8 +42,8 @@ void setup() {
   //NEED FOR HIGHSCORE
   /*
   highscore = new Table();
-  highscore.addColumn("name");
-  highscore.addColumn("time");*/
+   highscore.addColumn("name");
+   highscore.addColumn("time");*/
 }
 
 // function that starts a new game by creating the map and player object and setting starting position of the player and
@@ -79,7 +81,7 @@ void newGame () {
   player.setPlayerVX(0);
   player.setPlayerVY(0);
   brightness = 100;
-  gameState = GAMEWAIT;
+  gameState = START;
 }
 
 
@@ -123,7 +125,7 @@ void drawText() {
   fill(0, 255, 0);
   textSize(40);
   text(player.getLives(), 100, 100);
-  if (gameState==GAMEWAIT) text ("press space to start", width/2, height/2);
+  if (gameState==START) text ("press space to start", width/2, height/2);
   else if (gameState==GAMEOVER) text ("game over", width/2, height/2);
   else if (gameState==GAMEWON) text ("won in "+ round(time) + " seconds", width/2, height/2);
 }
@@ -170,39 +172,39 @@ void drawLightcone() {
 }
 //------ vvvv HIGHSCORE TABLE  UNDER THIS LINE vvvv---------------------------------------
 /*void drawHighscore() {
-  TableRow row = highscore.addRow();
-  nameOfPlayer(nameOfPlayer);
-  row.setString("name", nameOfPlayer);
-  row.setInt("time", round(time));
-
-  highscore.sort("time");
-
-
-  if (highscore.getRowCount() > 5) {
-    highscore.removeRow(highscore.getRowCount());
-  }
-  int rowCount = 0;
+ TableRow row = highscore.addRow();
+ nameOfPlayer(nameOfPlayer);
+ row.setString("name", nameOfPlayer);
+ row.setInt("time", round(time));
+ 
+ highscore.sort("time");
+ 
+ 
+ if (highscore.getRowCount() > 5) {
+ highscore.removeRow(highscore.getRowCount());
+ }
+ int rowCount = 0;
  int textPosition = 200;
-  for (TableRow rows : highscore.rows()) {
+ for (TableRow rows : highscore.rows()) {
  text(rows.getString("name"), 50, textPosition);
-    text(rows.getInt("time"), 150, textPosition);
-    textPosition += 50;
-    rowCount++;
-  }
-  saveTable(highscore, "data/new.csv");
-}
-
-String nameOfPlayer(String nameOfPlayer) {
-  if (keyPressed && key == '\n' ) {
-    cacheNameOfPlayer = nameOfPlayer;
-
-    nameOfPlayer = "";
-  } else if (keyPressed) {
-
-    nameOfPlayer = nameOfPlayer + key;
-  }
-  return nameOfPlayer;
-}*/
+ text(rows.getInt("time"), 150, textPosition);
+ textPosition += 50;
+ rowCount++;
+ }
+ saveTable(highscore, "data/new.csv");
+ }
+ 
+ String nameOfPlayer(String nameOfPlayer) {
+ if (keyPressed && key == '\n' ) {
+ cacheNameOfPlayer = nameOfPlayer;
+ 
+ nameOfPlayer = "";
+ } else if (keyPressed) {
+ 
+ nameOfPlayer = nameOfPlayer + key;
+ }
+ return nameOfPlayer;
+ }*/
 //-------------HIGHSCORE TABLE ABOVE THIS LINE -------------------
 
 void checkForEffectTile() {
@@ -233,7 +235,61 @@ void collectFlashlight(int x, int y) {
   map.setPixel(x, y, 'F');
 }
 
+void drawStartScreen() {
+  background(0);
+  textSize(100);
+  text("Startbidschirm", 100, 100);
+}
+
+void drawHelpScreen() {
+  background(0);
+  textSize(100);
+  text("Test Help screen", 100, 100);
+}
+
+void drawGameOverScreen() {
+  background(0);
+  textSize(60);
+  text("Test GameOverScreen", 100, 100);
+}
+
+void drawGameWonScreen() {
+  background(0);
+  textSize(60);
+  text("Test GameWonScreen", 100, 100);
+}
+
 void draw() {
+
+  if (gameState==START) {
+    if (keyPressed && key == ' ') {
+      gameState = GAMERUNNING;
+    }
+    if (keyPressed && key == 'h' && helpTimer <= 0) {
+      helpTimer = 0.5;
+      gameState = HELP;
+    }
+    drawStartScreen();
+  }
+  if (gameState == HELP) {
+    drawHelpScreen();
+    if (keyPressed && key == 'h' && helpTimer <= 0) {
+      helpTimer = 0.5;
+      gameState = START;
+    }
+  }
+  if (gameState == GAMEOVER) {
+    drawGameOverScreen();
+    if ( keyPressed && key == ' ') {
+      newGame();
+    }
+  }
+  if (gameState == GAMEWON) {
+    drawGameWonScreen();
+    if ( keyPressed && key == ' ') {
+      newGame();
+    }
+  }
   if (gameState==GAMERUNNING) {
     player.updatePlayer();
     for (Enemy enemy : enemies) {
@@ -254,40 +310,47 @@ void draw() {
       }
     }
 
-
-
     if (player.getLives() <= 0) {
       gameState = GAMEOVER;
+      startTimer = 0.5;
       brightness = 1000;
     }
 
     if (brightness <= 20) {
       gameState = GAMEOVER;
+      startTimer = 0.5;
       // set brightness high so player can see map in gameover screen
       brightness = 1000;
     }
-    // check if user starts game by pressing spacebar or if he restarts the game
-  } else if (keyPressed && key==' ') {
-    if (gameState==GAMEWAIT) {
-      gameState=GAMERUNNING;
-    } else if (gameState==GAMEOVER || gameState==GAMEWON)
-    {
-      newGame();
+    screenLeftX = player.getPlayerX() - width/2;
+    screenTopY  = player.getPlayerY() - height/2;
+
+    background(0);
+
+    drawMap();
+    // image(playerImg, player.playerX - screenLeftX, player.playerY - screenTopY, playerImg.width, playerImg.height);
+    player.drawPlayer(screenLeftX, screenTopY);
+    for (Enemy enemy : enemies) {
+      enemy.drawEnemy(screenLeftX, screenTopY);
     }
+    drawLightcone();
+    drawText();
+    fill(255);
+    text(flashlightTimer, 50, 50);
+    // check if user starts game by pressing spacebar or if he restarts the game
+  } /*else if (keyPressed && key==' ' && startTimer <= 0) {
+   if (gameState==START) {
+   gameState=GAMERUNNING;
+   } else if (gameState==GAMEOVER || gameState==GAMEWON)
+   {
+   newGame();
+   }
+   }*/
+  if (helpTimer >= 0) {
+    helpTimer -= 1/frameRate;
   }
-  screenLeftX = player.getPlayerX() - width/2;
-  screenTopY  = player.getPlayerY() - height/2;
 
-  background(0);
-
-  drawMap();
-  // image(playerImg, player.playerX - screenLeftX, player.playerY - screenTopY, playerImg.width, playerImg.height);
-  player.drawPlayer(screenLeftX, screenTopY);
-  for (Enemy enemy : enemies) {
-    enemy.drawEnemy(screenLeftX, screenTopY);
+  if (startTimer >= 0) {
+    helpTimer -= 1/frameRate;
   }
-  drawLightcone();
-  drawText();
-  fill(255);
-  text(flashlightTimer, 50, 50);
 }

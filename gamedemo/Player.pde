@@ -91,8 +91,6 @@ class Player {
     return this.playerR;
   }
 
-
-
   public float getPlayerX() {
     return this.playerX;
   }
