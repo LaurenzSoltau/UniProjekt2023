@@ -237,26 +237,31 @@ void collectFlashlight(int x, int y) {
 
 void drawStartScreen() {
   background(0);
-  textSize(100);
+  textSize(50);
   text("Startbidschirm", 100, 100);
+  text("press h to get back to helpScreen", 100, 400);
+  text("press space to play", 100, 600);
 }
 
 void drawHelpScreen() {
   background(0);
-  textSize(100);
+  textSize(50);
   text("Test Help screen", 100, 100);
+  text("press h to get back to startScreen", 100, 400);
 }
 
 void drawGameOverScreen() {
   background(0);
   textSize(60);
   text("Test GameOverScreen", 100, 100);
+  text("press space tp player again", 100, 400);
 }
 
 void drawGameWonScreen() {
   background(0);
   textSize(60);
   text("Test GameWonScreen", 100, 100);
+  text("press space tp player again", 100, 400);
 }
 
 void draw() {
@@ -338,14 +343,7 @@ void draw() {
     fill(255);
     text(flashlightTimer, 50, 50);
     // check if user starts game by pressing spacebar or if he restarts the game
-  } /*else if (keyPressed && key==' ' && startTimer <= 0) {
-   if (gameState==START) {
-   gameState=GAMERUNNING;
-   } else if (gameState==GAMEOVER || gameState==GAMEWON)
-   {
-   newGame();
-   }
-   }*/
+  }
   if (helpTimer >= 0) {
     helpTimer -= 1/frameRate;
   }
