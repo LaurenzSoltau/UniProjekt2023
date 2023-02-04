@@ -35,7 +35,7 @@ int gameState;
 PImage backgroundImg;
 
 void setup() {
-  size(900, 900);
+  size(900, 768);
   playerImg = loadImage("data/images/player.png");
   enemyImg = loadImage("data/images/A.png");
   newGame();
@@ -171,45 +171,7 @@ void drawLightcone() {
   updatePixels();
 }
 //------ vvvv HIGHSCORE TABLE  UNDER THIS LINE vvvv---------------------------------------
-void drawHighscore() {
-  TableRow row = highscore.addRow();
-  nameOfPlayer(nameOfPlayer);
-  row.setString("name", nameOfPlayer);
-  row.setInt("time", round(time));
 
-  highscore.sort("time");
-
-
-  if (highscore.getRowCount() > 5) {
-    highscore.removeRow(highscore.getRowCount()-1);
-  }
-  int rowCount = 0;
-  int textPosition = 200;
-  for (TableRow rows : highscore.rows()) {
-    text(rows.getString("name"), 50, textPosition);
-    text(rows.getInt("time"), 150, textPosition);
-    textPosition += 50;
-    rowCount++;
-  }
-  saveTable(highscore, "data/new.csv");
-}
-
-String nameOfPlayer(String nameOfPlayer) {
-
-  if (mouseX > 150 && mouseX < 150 + 200 && mouseY > 50 && mouseY < 50 + 20) {
-    if (keyPressed && key == '\n' ) {
-      cacheNameOfPlayer = nameOfPlayer;
-
-      nameOfPlayer = "";
-    } else if (keyPressed) {
-
-      nameOfPlayer = nameOfPlayer + key;
-      fill(0);
-      text(nameOfPlayer,150, 53);
-    }
-  }
-  return nameOfPlayer;
-}
 //-------------HIGHSCORE TABLE ABOVE THIS LINE -------------------
 
 void checkForEffectTile() {
@@ -242,32 +204,105 @@ void collectFlashlight(int x, int y) {
 
 void drawStartScreen() {
   background(0);
-  textSize(50);
-  text("Startbidschirm", 100, 100);
-  text("press h to get back to helpScreen", 100, 400);
-  text("press space to play", 100, 600);
+  fill(#930C0C);
+  textSize(40);
+  text("NYCTOPHOBIA", 330, 150);
+  textSize(30);
+  text("Help", width/4, 520 );
+  textSize(20);
+  text("Press 'H'", width/4, 545);
+  textSize(30);
+  text("Start", 600, 520 );
+  textSize(20);
+  text("Press 'SPACE'", 600, 545);
 }
 
 void drawHelpScreen() {
   background(0);
-  textSize(50);
-  text("Test Help screen", 100, 100);
-  text("press h to get back to startScreen", 100, 400);
+  fill(#930C0C);
+  text("Guide me trhough the labyrinth", 20, 60);
+  text("You have three lives. If they are gone: Game Over!", 20, 90);
+  text("You loose lives by getting attacked by spiders...", 20, 120);
+  text("... if your light goes out... you die.", 20, 150);
+  text("Collect matches and flashlights to survive longer.", 20, 180);
+  text("Press 'H' to get back to the Startscreen!", width/2-150, height-100);
 }
 
 void drawGameOverScreen() {
   background(0);
-  textSize(60);
-  text("Test GameOverScreen", 100, 100);
-  text("press space tp player again", 100, 400);
+  fill(#930C0C);
+
+  textSize(80);
+  text("GAME OVER", 450, 150);
+  textSize(30);
+  text("Restart", 630, height-100);
+  textSize(20);
+  text("Press 'SPACE'!", 630, height-75);
+
+  //display score at gameover page
+
+  textSize(30);
+  text("You lasted " + round(time) + " seconds", 465, 250);
 }
 
 void drawGameWonScreen() {
   background(0);
-  textSize(60);
-  text("Test GameWonScreen", 100, 100);
-  text("press space tp player again", 100, 400);
+  fill(#930C0C);
+
+  textSize(80);
+  text("YOU SURVIVED", 450, 150);
+  textSize(30);
+  text("Play again", 630, height-100);
+  text("Name", 320,250);
+  text("Time", 520,250);
+  textSize(20);
+  text("Press 'SPACE'!", 630, height-75);
+
   drawHighscore();
+}
+void drawHighscore() {
+  TableRow row = highscore.addRow();
+  nameOfPlayer = nameOfPlayer(nameOfPlayer);
+  row.setString("name", nameOfPlayer);
+  row.setInt("time", round(time));
+
+  highscore.sort("time");
+
+
+  if (highscore.getRowCount() > 5) {
+    highscore.removeRow(highscore.getRowCount()-1);
+  }
+  int rowCount = 0;
+  int textPosition = 300;
+  for (TableRow rows : highscore.rows()) {
+    text(rows.getString("name"), 320, textPosition);
+    text(rows.getInt("time"), 520, textPosition);
+    textPosition += 50;
+    rowCount++;
+  }
+  saveTable(highscore, "data/new.csv");
+}
+
+String nameOfPlayer(String nameOfPlayer) {
+  textSize(30);
+  fill(#930C0C);
+  text("Type in your name", 450,50);
+  noFill();
+  stroke(#930C0C);
+  rect(350,100, 200,20);
+  if (mouseX > 350 && mouseX < 350 + 200 && mouseY > 100 && mouseY < 100 + 20) {
+    if (keyPressed && key == '\n' ) {
+      cacheNameOfPlayer = nameOfPlayer;
+
+      nameOfPlayer = "";
+    } else if (keyPressed) {
+
+      nameOfPlayer = nameOfPlayer + key;
+      fill(#930C0C);
+      text(nameOfPlayer,355, 102);
+    }
+  }
+  return nameOfPlayer;
 }
 
 void draw() {
