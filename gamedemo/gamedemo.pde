@@ -95,7 +95,20 @@ void keyPressed() {
   } else if ( keyCode == RIGHT) {
     player.setPlayerVX(1);
   }
+  if (gameState == GAMEWON) {
+    if (mouseX > 350 && mouseX < 350 + 200 && mouseY > 100 && mouseY < 100 + 20) {
+    }
+    if (key == '\n' ) {
+      cacheNameOfPlayer = nameOfPlayer;
+
+      nameOfPlayer = "";
+    } else {
+
+      nameOfPlayer = nameOfPlayer + key;
+    }
+  }
 }
+
 
 void keyReleased() {
   if (keyCode == UP || keyCode == DOWN) {
@@ -253,8 +266,8 @@ void drawGameWonScreen() {
   text("YOU SURVIVED", 450, 150);
   textSize(30);
   text("Play again", 630, height-100);
-  text("Name", 320,250);
-  text("Time", 520,250);
+  text("Name", 320, 250);
+  text("Time", 520, 250);
   textSize(20);
   text("Press 'SPACE'!", 630, height-75);
 
@@ -272,13 +285,13 @@ void drawHighscore() {
   if (highscore.getRowCount() > 5) {
     highscore.removeRow(highscore.getRowCount()-1);
   }
-  int rowCount = 0;
+
   int textPosition = 300;
   for (TableRow rows : highscore.rows()) {
     text(rows.getString("name"), 320, textPosition);
     text(rows.getInt("time"), 520, textPosition);
     textPosition += 50;
-    rowCount++;
+ 
   }
   saveTable(highscore, "data/new.csv");
 }
@@ -286,22 +299,13 @@ void drawHighscore() {
 String nameOfPlayer(String nameOfPlayer) {
   textSize(30);
   fill(#930C0C);
-  text("Type in your name", 450,50);
+  text("Type in your name", 450, 50);
   noFill();
   stroke(#930C0C);
-  rect(350,100, 200,20);
-  if (mouseX > 350 && mouseX < 350 + 200 && mouseY > 100 && mouseY < 100 + 20) {
-    if (keyPressed && key == '\n' ) {
-      cacheNameOfPlayer = nameOfPlayer;
+  rect(350, 100, 200, 20);
+  fill(#930C0C);
+  text(nameOfPlayer, 355, 102);
 
-      nameOfPlayer = "";
-    } else if (keyPressed) {
-
-      nameOfPlayer = nameOfPlayer + key;
-      fill(#930C0C);
-      text(nameOfPlayer,355, 102);
-    }
-  }
   return nameOfPlayer;
 }
 
