@@ -5,12 +5,12 @@ Enemy enemy;
 PImage playerImg;
 PImage enemyImg;
 //NEED FOR HIGHSCORE
-/*
+
 String nameOfPlayer = "";
- String cacheNameOfPlayer = "";
- 
- Table highscore;
- */
+String cacheNameOfPlayer = "";
+
+Table highscore;
+
 
 // The players is a circle and this is its radius
 float playerR = 10;
@@ -40,10 +40,10 @@ void setup() {
   enemyImg = loadImage("data/images/A.png");
   newGame();
   //NEED FOR HIGHSCORE
-  /*
+
   highscore = new Table();
-   highscore.addColumn("name");
-   highscore.addColumn("time");*/
+  highscore.addColumn("name");
+  highscore.addColumn("time");
 }
 
 // function that starts a new game by creating the map and player object and setting starting position of the player and
@@ -171,40 +171,45 @@ void drawLightcone() {
   updatePixels();
 }
 //------ vvvv HIGHSCORE TABLE  UNDER THIS LINE vvvv---------------------------------------
-/*void drawHighscore() {
- TableRow row = highscore.addRow();
- nameOfPlayer(nameOfPlayer);
- row.setString("name", nameOfPlayer);
- row.setInt("time", round(time));
- 
- highscore.sort("time");
- 
- 
- if (highscore.getRowCount() > 5) {
- highscore.removeRow(highscore.getRowCount());
- }
- int rowCount = 0;
- int textPosition = 200;
- for (TableRow rows : highscore.rows()) {
- text(rows.getString("name"), 50, textPosition);
- text(rows.getInt("time"), 150, textPosition);
- textPosition += 50;
- rowCount++;
- }
- saveTable(highscore, "data/new.csv");
- }
- 
- String nameOfPlayer(String nameOfPlayer) {
- if (keyPressed && key == '\n' ) {
- cacheNameOfPlayer = nameOfPlayer;
- 
- nameOfPlayer = "";
- } else if (keyPressed) {
- 
- nameOfPlayer = nameOfPlayer + key;
- }
- return nameOfPlayer;
- }*/
+void drawHighscore() {
+  TableRow row = highscore.addRow();
+  nameOfPlayer(nameOfPlayer);
+  row.setString("name", nameOfPlayer);
+  row.setInt("time", round(time));
+
+  highscore.sort("time");
+
+
+  if (highscore.getRowCount() > 5) {
+    highscore.removeRow(highscore.getRowCount()-1);
+  }
+  int rowCount = 0;
+  int textPosition = 200;
+  for (TableRow rows : highscore.rows()) {
+    text(rows.getString("name"), 50, textPosition);
+    text(rows.getInt("time"), 150, textPosition);
+    textPosition += 50;
+    rowCount++;
+  }
+  saveTable(highscore, "data/new.csv");
+}
+
+String nameOfPlayer(String nameOfPlayer) {
+
+  if (mouseX > 150 && mouseX < 150 + 200 && mouseY > 50 && mouseY < 50 + 20) {
+    if (keyPressed && key == '\n' ) {
+      cacheNameOfPlayer = nameOfPlayer;
+
+      nameOfPlayer = "";
+    } else if (keyPressed) {
+
+      nameOfPlayer = nameOfPlayer + key;
+      fill(0);
+      text(nameOfPlayer,150, 53);
+    }
+  }
+  return nameOfPlayer;
+}
 //-------------HIGHSCORE TABLE ABOVE THIS LINE -------------------
 
 void checkForEffectTile() {
@@ -262,6 +267,7 @@ void drawGameWonScreen() {
   textSize(60);
   text("Test GameWonScreen", 100, 100);
   text("press space tp player again", 100, 400);
+  drawHighscore();
 }
 
 void draw() {
