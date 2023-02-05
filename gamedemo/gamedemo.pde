@@ -45,12 +45,11 @@ void setup() {
   spiderLeft= loadImage("data/images/spiderLeft.png");
   helpScreen= loadImage("data/images/helpScreen.png");
 
-  newGame();
-  //NEED FOR HIGHSCORE
-
   highscore = new Table();
-  highscore.addColumn("name");
+  highscore.addColumn("date");
   highscore.addColumn("time");
+
+  newGame();
 }
 
 // function that starts a new game by creating the map and player object and setting starting position of the player and
@@ -93,13 +92,13 @@ void newGame () {
 
 
 void keyPressed() {
-  if ( keyCode == UP) {
+  if ( keyCode == UP || key == 'w') {
     player.setPlayerVY(-1);
-  } else if ( keyCode == DOWN) {
+  } else if ( keyCode == DOWN || key == 's') {
     player.setPlayerVY(1);
-  } else if ( keyCode == LEFT) {
+  } else if ( keyCode == LEFT || key == 'a') {
     player.setPlayerVX(-1);
-  } else if ( keyCode == RIGHT) {
+  } else if ( keyCode == RIGHT || key == 'd') {
     player.setPlayerVX(1);
   }
   if (gameState == GAMEWON) {
@@ -116,10 +115,10 @@ void keyPressed() {
 }
 
 void keyReleased() {
-  if (keyCode == UP || keyCode == DOWN) {
+  if (keyCode == UP || keyCode == DOWN || key == 'w' || key == 's') {
     player.setPlayerVY(0);
   }
-  if (keyCode == RIGHT || keyCode == LEFT) {
+  if (keyCode == RIGHT || keyCode == LEFT || key == 'a' || key == 'd') {
     player.setPlayerVX(0);
   }
 }
@@ -192,7 +191,7 @@ void drawLightcone() {
 
 //-------------HIGHSCORE TABLE ABOVE THIS LINE -------------------
 
-void checkForEffectTile() {
+boolean checkForEffectTile() {
   // get current position of the player
   int playerX = (int) player.getPlayerX();
   int playerY = (int) player.getPlayerY();
@@ -202,6 +201,15 @@ void checkForEffectTile() {
   if (map.atPixel(playerX, playerY) == 'L') {
     collectFlashlight(playerX, playerY);
   }
+  if (map.atPixel(playerX, playerY) == 'H') {
+    drawGameOverScreen();
+    gameState = GAMEOVER;
+  }
+  if (map.atPixel(playerX, playerY) == 'E') {
+    gameState = GAMEWON;
+    return true;
+  }
+  return false;
 }
 
 void collectMatchsticks(int x, int y) {
@@ -265,7 +273,7 @@ void drawGameOverScreen() {
   image(spiderLeft, 600, 200, spiderLeft.width, spiderLeft.height);
 }
 
-void drawGameWonScreen() {
+public void drawGameWonScreen() {
   background(0);
   fill(#930C0C);
 
@@ -282,12 +290,17 @@ void drawGameWonScreen() {
 }
 void drawHighscore() {
   loadTable("new.csv");
-  TableRow row = highscore.addRow();
-  nameOfPlayer = nameOfPlayer(nameOfPlayer);
-  row.setString("name", nameOfPlayer);
-  row.setInt("time", round(time));
+  TableRow newRow = highscore.addRow();
+  int day = day();
+  int month = month();
+  int year = year();
+  String date = String.valueOf(day) + "." + String.valueOf(month) + "." + String.valueOf(year);
+  String formattedTime = String.valueOf(round(time)) + " seconds";
+  //nameOfPlayer = nameOfPlayer(nameOfPlayer);
+  newRow.setString("date", date);
+  newRow.setString("time", formattedTime);
 
-  //   highscore.sort("time");
+  highscore.sort("time");
 
 
   if (highscore.getRowCount() > 5) {
@@ -298,24 +311,26 @@ void drawHighscore() {
   int textPosition = 300;
   for (int i = 0; i < highscore.getRowCount(); i++) {
     TableRow rows = highscore.getRow(i);
-    text(rows.getString("name"), 320, textPosition);
-    text(rows.getInt("time"), 520, textPosition);
+    text(rows.getString("date"), 320, textPosition);
+    text(rows.getString("time"), 520, textPosition);
     textPosition += 50;
   }
 }
 
+/*
 String nameOfPlayer(String nameOfPlayer) {
-  textSize(30);
-  fill(#930C0C);
-  text("Type in your name", 450, 50);
-  noFill();
-  stroke(#930C0C);
-  rect(350, 100, 200, 20);
-  fill(#930C0C);
-  text(nameOfPlayer, 355, 102);
-
-  return nameOfPlayer;
-}
+ textSize(30);
+ fill(#930C0C);
+ text("Type in your name", 450, 50);
+ noFill();
+ stroke(#930C0C);
+ rect(350, 100, 200, 20);
+ fill(#930C0C);
+ text(nameOfPlayer, 355, 102);
+ 
+ return nameOfPlayer;
+ }
+ */
 
 void draw() {
 
@@ -337,13 +352,13 @@ void draw() {
     }
   }
   if (gameState == GAMEOVER) {
-    drawGameOverScreen();
+    //drawGameOverScreen();
     if ( keyPressed && key == ' ') {
       newGame();
     }
   }
   if (gameState == GAMEWON) {
-    drawGameWonScreen();
+    //drawGameWonScreen();
     if ( keyPressed && key == ' ') {
       newGame();
     }
@@ -356,7 +371,12 @@ void draw() {
         player.gotHit();
       }
     }
-    checkForEffectTile();
+    boolean isWin = checkForEffectTile();
+    if (isWin) {
+      gameState = GAMEWON;
+      drawGameWonScreen();
+      return;
+    }
     time+=1/frameRate;
     //light cone gets smaller over time
     brightness-=8/frameRate;
@@ -372,6 +392,8 @@ void draw() {
       gameState = GAMEOVER;
       startTimer = 0.5;
       brightness = 1000;
+      drawGameOverScreen();
+      return;
     }
 
     if (brightness <= 20) {
@@ -379,6 +401,8 @@ void draw() {
       startTimer = 0.5;
       // set brightness high so player can see map in gameover screen
       brightness = 1000;
+      drawGameOverScreen();
+      return;
     }
     screenLeftX = player.getPlayerX() - width/2;
     screenTopY  = player.getPlayerY() - height/2;

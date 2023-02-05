@@ -51,12 +51,12 @@ class Player {
       nextX = playerX;
       nextY = playerY;
     }
-    if ( map.testTileFullyInsideRect (nextX-playerR, nextY-playerR, 2*playerR, 2*playerR, "H_" ) ) {
-      gameState=GAMEOVER;
-    }
-    if ( map.testTileFullyInsideRect (nextX-playerR, nextY-playerR, 2*playerR, 2*playerR, "E" ) ) {
-      gameState=GAMEWON;
-    }
+    /*if ( map.testTileFullyInsideRect (nextX-playerR, nextY-playerR, 2*playerR, 2*playerR, "H_" ) ) {
+     gameState=GAMEOVER;
+     }
+     if ( map.testTileFullyInsideRect (nextX-playerR, nextY-playerR, 2*playerR, 2*playerR, "E" ) ) {
+     gameState=GAMEWON;
+     }*/
 
     playerX = nextX;
     playerY = nextY;
