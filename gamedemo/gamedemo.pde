@@ -1,4 +1,7 @@
 Map map;
+PImage spiderRight;
+PImage spiderLeft;
+PImage helpScreen;
 Player player;
 ArrayList<Enemy> enemies;
 Enemy enemy;
@@ -38,6 +41,10 @@ void setup() {
   size(900, 768);
   playerImg = loadImage("data/images/player.png");
   enemyImg = loadImage("data/images/A.png");
+  spiderRight = loadImage("data/images/spiderRight.png");
+  spiderLeft= loadImage("data/images/spiderLeft.png");
+  helpScreen= loadImage("data/images/helpScreen.png");
+
   newGame();
   //NEED FOR HIGHSCORE
 
@@ -216,8 +223,11 @@ void collectFlashlight(int x, int y) {
 void drawStartScreen() {
   background(0);
   fill(#930C0C);
-  textSize(40);
-  text("NYCTOPHOBIA", 330, 150);
+  textSize(45);
+  text("NYCTO", 270, 145);
+  text("ARACHNO", 210, 185);
+  textSize(100);
+  text("PHOBIA", 400, 180);
   textSize(30);
   text("Help", width/4, 520 );
   textSize(20);
@@ -226,17 +236,14 @@ void drawStartScreen() {
   text("Start", 600, 520 );
   textSize(20);
   text("Press 'SPACE'", 600, 545);
+  image(spiderRight, 100, 200, spiderRight.width, spiderRight.height);
+  image(spiderLeft, 600, 200, spiderLeft.width, spiderLeft.height);
 }
 
 void drawHelpScreen() {
   background(0);
   fill(#930C0C);
-  text("Guide me trhough the labyrinth", 20, 60);
-  text("You have three lives. If they are gone: Game Over!", 20, 90);
-  text("You loose lives by getting attacked by spiders...", 20, 120);
-  text("... if your light goes out... you die.", 20, 150);
-  text("Collect matches and flashlights to survive longer.", 20, 180);
-  text("Press 'H' to get back to the Startscreen!", width/2-150, height-100);
+  image(helpScreen, 50, 100, helpScreen.width*1.2, helpScreen.height*1.2);
 }
 
 void drawGameOverScreen() {
@@ -284,7 +291,7 @@ void drawHighscore() {
   if (highscore.getRowCount() > 5) {
     highscore.removeRow(highscore.getRowCount()-1);
   }
-    saveTable(highscore, "data/new.csv");
+  saveTable(highscore, "data/new.csv");
 
   int textPosition = 300;
   for (int i = 0; i < highscore.getRowCount(); i++) {
@@ -293,7 +300,6 @@ void drawHighscore() {
     text(rows.getInt("time"), 520, textPosition);
     textPosition += 50;
   }
-
 }
 
 String nameOfPlayer(String nameOfPlayer) {
