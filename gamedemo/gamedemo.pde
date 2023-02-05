@@ -281,8 +281,8 @@ public void drawGameWonScreen() {
   text("YOU SURVIVED", 450, 150);
   textSize(30);
   text("Play again", 630, height-100);
-  text("Name", 320, 250);
-  text("Time", 520, 250);
+  text("Date", 420, 250);
+  text("Time", 550, 250);
   textSize(20);
   text("Press 'SPACE'!", 630, height-75);
 
@@ -311,8 +311,9 @@ void drawHighscore() {
   int textPosition = 300;
   for (int i = 0; i < highscore.getRowCount(); i++) {
     TableRow rows = highscore.getRow(i);
-    text(rows.getString("date"), 320, textPosition);
-    text(rows.getString("time"), 520, textPosition);
+    text(i+1, 320, textPosition);
+    text(rows.getString("date"), 420, textPosition);
+    text(rows.getString("time"), 550, textPosition);
     textPosition += 50;
   }
 }
