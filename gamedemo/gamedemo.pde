@@ -96,8 +96,7 @@ void keyPressed() {
     player.setPlayerVX(1);
   }
   if (gameState == GAMEWON) {
-    if (mouseX > 350 && mouseX < 350 + 200 && mouseY > 100 && mouseY < 100 + 20) {
-    }
+
     if (key == '\n' ) {
       cacheNameOfPlayer = nameOfPlayer;
 
@@ -108,7 +107,6 @@ void keyPressed() {
     }
   }
 }
-
 
 void keyReleased() {
   if (keyCode == UP || keyCode == DOWN) {
@@ -274,26 +272,28 @@ void drawGameWonScreen() {
   drawHighscore();
 }
 void drawHighscore() {
+  loadTable("new.csv");
   TableRow row = highscore.addRow();
   nameOfPlayer = nameOfPlayer(nameOfPlayer);
   row.setString("name", nameOfPlayer);
   row.setInt("time", round(time));
 
-  highscore.sort("time");
+  //   highscore.sort("time");
 
 
   if (highscore.getRowCount() > 5) {
     highscore.removeRow(highscore.getRowCount()-1);
   }
+    saveTable(highscore, "data/new.csv");
 
   int textPosition = 300;
-  for (TableRow rows : highscore.rows()) {
+  for (int i = 0; i < highscore.getRowCount(); i++) {
+    TableRow rows = highscore.getRow(i);
     text(rows.getString("name"), 320, textPosition);
     text(rows.getInt("time"), 520, textPosition);
     textPosition += 50;
- 
   }
-  saveTable(highscore, "data/new.csv");
+
 }
 
 String nameOfPlayer(String nameOfPlayer) {
