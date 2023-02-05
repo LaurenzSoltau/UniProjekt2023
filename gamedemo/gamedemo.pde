@@ -260,7 +260,9 @@ void drawGameOverScreen() {
   //display score at gameover page
 
   textSize(30);
-  text("You lasted " + round(time) + " seconds", 465, 250);
+  text("You survived " + round(time) + " seconds", 450, 220);
+  image(spiderRight, 100, 200, spiderRight.width, spiderRight.height);
+  image(spiderLeft, 600, 200, spiderLeft.width, spiderLeft.height);
 }
 
 void drawGameWonScreen() {
