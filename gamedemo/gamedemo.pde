@@ -87,7 +87,8 @@ void newGame () {
   player.setPlayerVX(0);
   player.setPlayerVY(0);
   brightness = 100;
-  gameState = START;
+  
+//  gameState = START;
 }
 
 // control of player
@@ -252,7 +253,7 @@ void drawGameOverScreen() {
   textSize(30);
   text("Restart", 630, height-100);
   textSize(20);
-  text("Press 'SPACE'!", 630, height-75);
+  text("Press 'R'!", 630, height-75);
 
   //display score at gameover page
   textSize(30);
@@ -272,7 +273,7 @@ public void drawGameWonScreen() {
   text("Date", 420, 250);
   text("Time", 550, 250);
   textSize(20);
-  text("Press 'SPACE'!", 630, height-75);
+  text("Press 'R'!", 630, height-75);
 
   drawHighscore();
 }
@@ -329,8 +330,9 @@ void draw() {
   }
   
   if (gameState == GAMEOVER || gameState == GAMEWON) {
-    if ( keyPressed && key == ' ') {
+    if ( keyPressed && key == 'r') {
       newGame();
+      gameState = GAMERUNNING;
     }
   }
 /*  if (gameState == GAMEWON) {
@@ -390,11 +392,4 @@ void draw() {
     drawLightcone();
     drawText();
   }
- /* if (helpTimer >= 0) {
-    helpTimer -= 1/frameRate;
-  }
-
-  if (startTimer >= 0) {
-    helpTimer -= 1/frameRate;
-  }*/
 }
