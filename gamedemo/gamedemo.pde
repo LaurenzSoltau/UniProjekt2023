@@ -39,7 +39,7 @@ int gameState;
 void setup() {
   size(900, 768);
   playerImg = loadImage("data/images/player.png");
-  enemyImg = loadImage("data/images/A.png");
+  enemyImg = loadImage("data/images/spider.png");
   spiderRight = loadImage("data/images/spiderRight.png");
   spiderLeft= loadImage("data/images/spiderLeft.png");
   helpScreen= loadImage("data/images/helpScreen.png");

@@ -30,7 +30,7 @@ class Enemy {
   }
 // checks for collision with player, returs true if player is hit and false if not
   public boolean checkCollision(Player player) {
-    if (player.getPlayerX() + player.playerImg.width >=posX  && player.getPlayerY()+player.playerImg.height >= posY  && player.getPlayerY()  <=posY + enemyImg.height  && player.getPlayerX() <= posX + enemyImg.width) {
+    if (player.getPlayerX() + player.playerImg.width >=posX  && player.getPlayerY()+player.playerImg.height >= posY  && player.getPlayerY()  <=posY + enemyImg.height  && player.getPlayerX() <= posX + enemyImg.width/2) {
     
       return true;
     } else return false;
@@ -62,7 +62,7 @@ class Enemy {
     // calculate x and y position in the next frame
     float nextPosX = posX + velocityX / frameRate;
     float nextPosY = posY + velocityY / frameRate;
-    if (map.testTileInRect(nextPosX-(enemyImg.width/2), nextPosY-(enemyImg.height/2), enemyImg.width/2, enemyImg.height/2, "W" ) ) {
+    if (map.testTileInRect(nextPosX-(enemyImg.width/2), nextPosY-(enemyImg.height/2), enemyImg.width, enemyImg.height, "W" ) ) {
       velocityX *= -1;
       velocityY *= -1;
       nextPosX = posX;
