@@ -27,7 +27,7 @@ class Player {
     this.playerVX = 0;
     this.playerVY = 0;
     this.playerSpeed = playerSpeed;
- 
+
     this.map = map;
     this.lives = 3;
     this.damageTimer = 0;
@@ -44,9 +44,11 @@ class Player {
       isTint = false;
       // has to be implemented
     }
-    float nextX = playerX + playerVX/frameRate, nextY = playerY + playerVY/frameRate;
-    if ( map.testTileInRect( nextX-playerImg.width/2, nextY- playerImg.height/2, playerImg.width, playerImg.height, "W" ) ) {
+    float nextX = playerX + playerVX/frameRate;
+    float nextY = playerY + playerVY/frameRate;
+    if ( map.testTileInRect(nextX-playerImg.width/2, nextY-playerImg.height/2, playerImg.width, playerImg.height, "W" )) {
       playerVX = 0;
+      playerVY = 0;
       nextX = playerX;
       nextY = playerY;
     }
@@ -69,7 +71,7 @@ class Player {
     } else {
       noTint();
     }
-    image(playerImg, playerX - screenLeftX-playerImg.width/2, playerY - screenTopY-playerImg.height/2, playerImg.width, playerImg.height);
+    image(playerImg, playerX-screenLeftX-playerImg.width/2, playerY - screenTopY-playerImg.height/2, playerImg.width, playerImg.height);
   }
 
   //setter and getter

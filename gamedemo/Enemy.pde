@@ -25,13 +25,13 @@ class Enemy {
       this.velocityY = enemySpeed;
       this.velocityX = 0;
     }
-  //  this.enemyR = 10;
+    //  this.enemyR = 10;
     this.map = map;
   }
-// checks for collision with player, returs true if player is hit and false if not
+  // checks for collision with player, returs true if player is hit and false if not
   public boolean checkCollision(Player player) {
-    if (player.getPlayerX() + player.playerImg.width >=posX  && player.getPlayerY()+player.playerImg.height >= posY  && player.getPlayerY()  <=posY + enemyImg.height  && player.getPlayerX() <= posX + enemyImg.width/2) {
-    
+    if (player.getPlayerX()+playerImg.width/2 >=posX-enemyImg.width/2  && player.getPlayerY()+player.playerImg.height/2 >= posY-enemyImg.height/2  && player.getPlayerY()- player.playerImg.height/2  <=posY + enemyImg.height/2  && player.getPlayerX()-player.playerImg.width/2 <= posX + enemyImg.width/2) {
+
       return true;
     } else return false;
   }
