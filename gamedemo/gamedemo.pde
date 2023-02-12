@@ -1,41 +1,40 @@
 Map map;
+Player player;
+Enemy enemy;
+
 PImage spiderRight;
 PImage spiderLeft;
 PImage helpScreen;
-Player player;
-ArrayList<Enemy> enemies;
-Enemy enemy;
 PImage playerImg;
 PImage enemyImg;
-//NEED FOR HIGHSCORE
+PImage backgroundImg;
 
-String nameOfPlayer = "";
-String cacheNameOfPlayer = "";
+ArrayList<Enemy> enemies;
 
 Table highscore;
 
-
-// The players is a circle and this is its radius
-float playerR = 10;
 // Position of the goal center
 // Will be set by restart
 float goalX=0, goalY=0;
-
 // left / top border of the screen in map coordinates
 // used for scrolling
 float screenLeftX, screenTopY;
-//light beam around player
+//light cone around player
 float brightness;
+//Timer for flashlight object
 float flashlightTimer;
+//saves current brightness while flashlight óbject is used
 float saveBrightness;
+
 float helpTimer;
 float startTimer;
-
+//Timer for player
 float time;
+//Game States
 int START=0, GAMERUNNING=1, GAMEOVER=2, GAMEWON=3, HELP=4, HIGHSCORES=5;
 int gameState;
 
-PImage backgroundImg;
+
 
 void setup() {
   size(900, 768);
@@ -77,12 +76,13 @@ void newGame () {
         goalX = map.centerXOfTile (x);
         goalY = map.centerYOfTile (y);
       }
-
+      // if floortile is G add enemy to ArrayList
       if (map.at(x, y) == 'G') {
         enemies.add(new Enemy(enemyImg, 150, x, y, 'x', map));
       }
     }
   }
+  // set all variables to start/initial value
   time=0;
   player.setPlayerVX(0);
   player.setPlayerVY(0);
@@ -90,7 +90,7 @@ void newGame () {
   gameState = START;
 }
 
-
+// control of player
 void keyPressed() {
   if ( keyCode == UP || key == 'w') {
     player.setPlayerVY(-1);
@@ -101,19 +101,8 @@ void keyPressed() {
   } else if ( keyCode == RIGHT || key == 'd') {
     player.setPlayerVX(1);
   }
-  if (gameState == GAMEWON) {
-
-    if (key == '\n' ) {
-      cacheNameOfPlayer = nameOfPlayer;
-
-      nameOfPlayer = "";
-    } else {
-
-      nameOfPlayer = nameOfPlayer + key;
-    }
-  }
 }
-
+//control of player
 void keyReleased() {
   if (keyCode == UP || keyCode == DOWN || key == 'w' || key == 's') {
     player.setPlayerVY(0);
@@ -138,13 +127,12 @@ void drawMap() {
 }
 
 void drawText() {
-  textAlign(CENTER, CENTER);
-  fill(0, 255, 0);
+  textAlign(CENTER);
+  fill(#930C0C);
   textSize(40);
-  text(player.getLives(), 100, 100);
-  if (gameState==START) text ("press space to start", width/2, height/2);
-  else if (gameState==GAMEOVER) text ("game over", width/2, height/2);
-  else if (gameState==GAMEWON) text ("won in "+ round(time) + " seconds", width/2, height/2);
+  text("Lives: " +player.getLives(), 100, 50);
+  text("Time: "+round(time), width-100, 50);
+  text("Flashlight: "+round(flashlightTimer), width/2, 50);
 }
 
 //cone of light around player (around the center of the screen)
@@ -157,16 +145,15 @@ void drawLightcone() {
       // Calculate position of pixel
       int loc = x + y*width;
 
-      // Get the R G B values from image
+      // Get the rgb values from image
       float r = red(pixels[loc]);
       float g = green(pixels[loc]);
       float b = blue(pixels[loc]);
 
-
       // brightness based on players position
       float distance = dist(x, y, player.getPlayerX()-screenLeftX, player.getPlayerY()-screenTopY);
 
-      //brightness based on distance from player
+      // map brigthness
 
       float adjustBrightness = map(distance, 0, brightness, 4, 0);
       r *= adjustBrightness;
@@ -174,12 +161,12 @@ void drawLightcone() {
       b *= adjustBrightness;
 
 
-      // Constrain RGB to between 0 and 255
+      // constrain rgb to between 0 and 255
       r = constrain(r, 0, 255);
       g = constrain(g, 0, 255);
       b = constrain(b, 0, 255);
 
-      // Make a new color and set pixel in the window
+      // set new color
       color c = color(r, g, b);
       pixels[loc] = c;
     }
@@ -187,10 +174,9 @@ void drawLightcone() {
 
   updatePixels();
 }
-//------ vvvv HIGHSCORE TABLE  UNDER THIS LINE vvvv---------------------------------------
 
-//-------------HIGHSCORE TABLE ABOVE THIS LINE -------------------
-
+//checks if player is on an effect tile
+// return true if yes and false if not
 boolean checkForEffectTile() {
   // get current position of the player
   int playerX = (int) player.getPlayerX();
@@ -211,23 +197,22 @@ boolean checkForEffectTile() {
   }
   return false;
 }
-
+//if player collects matchsticks brightness is increased and effect tile is replaced with floor tile
 void collectMatchsticks(int x, int y) {
   brightness += 25;
   map.setPixel(x, y, 'F');
 }
+
+//if player collects Flashlight brightness is increased, flashlighttimer starts
+// effect tile is replaced with floor tile
 void collectFlashlight(int x, int y) {
   saveBrightness = brightness;
   flashlightTimer = 5;
   brightness = 1000;
 
-  if (flashlightTimer <= 0) {
-    brightness = 100;
-  }
-
   map.setPixel(x, y, 'F');
 }
-
+// draws Start Screen
 void drawStartScreen() {
   background(0);
   fill(#930C0C);
@@ -247,13 +232,13 @@ void drawStartScreen() {
   image(spiderRight, 100, 200, spiderRight.width, spiderRight.height);
   image(spiderLeft, 600, 200, spiderLeft.width, spiderLeft.height);
 }
-
+//draws Helpscreen
 void drawHelpScreen() {
   background(0);
   fill(#930C0C);
   image(helpScreen, 50, 100, helpScreen.width*1.2, helpScreen.height*1.2);
 }
-
+// Draws Game Over Screen
 void drawGameOverScreen() {
   background(0);
   fill(#930C0C);
@@ -266,13 +251,12 @@ void drawGameOverScreen() {
   text("Press 'SPACE'!", 630, height-75);
 
   //display score at gameover page
-
   textSize(30);
   text("You survived " + round(time) + " seconds", 450, 220);
   image(spiderRight, 100, 200, spiderRight.width, spiderRight.height);
   image(spiderLeft, 600, 200, spiderLeft.width, spiderLeft.height);
 }
-
+//draws Victory Screen
 public void drawGameWonScreen() {
   background(0);
   fill(#930C0C);
@@ -288,6 +272,7 @@ public void drawGameWonScreen() {
 
   drawHighscore();
 }
+//displays Highscore
 void drawHighscore() {
   loadTable("new.csv");
   TableRow newRow = highscore.addRow();
@@ -296,13 +281,12 @@ void drawHighscore() {
   int year = year();
   String date = String.valueOf(day) + "." + String.valueOf(month) + "." + String.valueOf(year);
   String formattedTime = String.valueOf(round(time)) + " seconds";
-  //nameOfPlayer = nameOfPlayer(nameOfPlayer);
   newRow.setString("date", date);
   newRow.setString("time", formattedTime);
-
+  //sorted from best to worst time
   highscore.sort("time");
 
-
+  //only display best five scores
   if (highscore.getRowCount() > 5) {
     highscore.removeRow(highscore.getRowCount()-1);
   }
@@ -318,20 +302,6 @@ void drawHighscore() {
   }
 }
 
-/*
-String nameOfPlayer(String nameOfPlayer) {
- textSize(30);
- fill(#930C0C);
- text("Type in your name", 450, 50);
- noFill();
- stroke(#930C0C);
- rect(350, 100, 200, 20);
- fill(#930C0C);
- text(nameOfPlayer, 355, 102);
- 
- return nameOfPlayer;
- }
- */
 
 void draw() {
 
@@ -417,10 +387,7 @@ void draw() {
       enemy.drawEnemy(screenLeftX, screenTopY);
     }
     drawLightcone();
-    drawText();
-    fill(255);
-    text(flashlightTimer, 50, 50);
-    // check if user starts game by pressing spacebar or if he restarts the game
+    drawText(); 
   }
   if (helpTimer >= 0) {
     helpTimer -= 1/frameRate;

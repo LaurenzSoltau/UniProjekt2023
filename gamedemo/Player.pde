@@ -2,7 +2,7 @@ class Player {
   // position of player
   private float playerX;
   private float playerY;
-
+  // lives
   private int lives;
   private float damageTimer;
 
@@ -13,10 +13,10 @@ class Player {
 
   private boolean isTint;
 
-  //speed and radius of the player character
+  //speed of the player character
   private float playerSpeed;
-  private float playerR;
 
+  // player Image
   public PImage playerImg;
 
 
@@ -27,7 +27,7 @@ class Player {
     this.playerVX = 0;
     this.playerVY = 0;
     this.playerSpeed = playerSpeed;
-    this.playerR = 10;
+ 
     this.map = map;
     this.lives = 3;
     this.damageTimer = 0;
@@ -44,19 +44,12 @@ class Player {
       isTint = false;
       // has to be implemented
     }
-    float nextX = playerX + playerVX/frameRate,
-      nextY = playerY + playerVY/frameRate;
-    if ( map.testTileInRect( nextX-playerR, nextY-playerR, 2*playerR, 2*playerR, "W" ) ) {
+    float nextX = playerX + playerVX/frameRate, nextY = playerY + playerVY/frameRate;
+    if ( map.testTileInRect( nextX-playerImg.width/2, nextY- playerImg.height/2, playerImg.width, playerImg.height, "W" ) ) {
       playerVX = 0;
       nextX = playerX;
       nextY = playerY;
     }
-    /*if ( map.testTileFullyInsideRect (nextX-playerR, nextY-playerR, 2*playerR, 2*playerR, "H_" ) ) {
-     gameState=GAMEOVER;
-     }
-     if ( map.testTileFullyInsideRect (nextX-playerR, nextY-playerR, 2*playerR, 2*playerR, "E" ) ) {
-     gameState=GAMEWON;
-     }*/
 
     playerX = nextX;
     playerY = nextY;
@@ -71,9 +64,6 @@ class Player {
   }
   void drawPlayer(float screenLeftX, float screenTopY) {
     // draw player
-    //noStroke();
-    //fill(0, 255, 255);
-    // ellipseMode(CENTER);
     if (isTint) {
       tint(255, 0, 0);
     } else {
@@ -85,10 +75,6 @@ class Player {
   //setter and getter
   public int getLives() {
     return this.lives;
-  }
-
-  public float getPlayerR() {
-    return this.playerR;
   }
 
   public float getPlayerX() {
