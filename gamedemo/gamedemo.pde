@@ -125,7 +125,7 @@ void drawMap() {
   // Same for screenTopY.
   map.draw( -screenLeftX, -screenTopY );
 }
-
+//draws text that is needed while the game is running
 void drawText() {
   textAlign(CENTER);
   fill(#930C0C);
@@ -135,7 +135,7 @@ void drawText() {
   text("Flashlight: "+round(flashlightTimer), width/2, 50);
 }
 
-//cone of light around player (around the center of the screen)
+//draws a cone of light around player (around the center of the screen)
 void drawLightcone() {
   loadPixels();
   // iterate over pixel
@@ -176,7 +176,7 @@ void drawLightcone() {
 }
 
 //checks if player is on an effect tile
-// return true if yes and false if not
+// returns true if yes and false if not
 boolean checkForEffectTile() {
   // get current position of the player
   int playerX = (int) player.getPlayerX();
@@ -237,6 +237,10 @@ void drawHelpScreen() {
   background(0);
   fill(#930C0C);
   image(helpScreen, 50, 100, helpScreen.width*1.2, helpScreen.height*1.2);
+  if (keyPressed && key == 'b' ) {
+   //   helpTimer = 0.5;
+      gameState = START;
+    }
 }
 // Draws Game Over Screen
 void drawGameOverScreen() {
@@ -290,8 +294,9 @@ void drawHighscore() {
   if (highscore.getRowCount() > 5) {
     highscore.removeRow(highscore.getRowCount()-1);
   }
+  //saves highscore
   saveTable(highscore, "data/new.csv");
-
+  //draws highscore
   int textPosition = 300;
   for (int i = 0; i < highscore.getRowCount(); i++) {
     TableRow rows = highscore.getRow(i);
@@ -304,36 +309,36 @@ void drawHighscore() {
 
 
 void draw() {
-
+  //
   if (gameState==START) {
+    //draw startscreen
+    drawStartScreen();
+    //start game if space is pressed
     if (keyPressed && key == ' ') {
       gameState = GAMERUNNING;
     }
-    if (keyPressed && key == 'h' && helpTimer <= 0) {
-      helpTimer = 0.5;
+    //got to helpscreen if h is pressed
+    if (keyPressed && key == 'h' ) {
+   //   helpTimer = 0.5;
       gameState = HELP;
     }
-    drawStartScreen();
   }
+  //if 'h' is pressed go to helpScreen
   if (gameState == HELP) {
     drawHelpScreen();
-    if (keyPressed && key == 'h' && helpTimer <= 0) {
-      helpTimer = 0.5;
-      gameState = START;
-    }
   }
-  if (gameState == GAMEOVER) {
-    //drawGameOverScreen();
+  
+  if (gameState == GAMEOVER || gameState == GAMEWON) {
     if ( keyPressed && key == ' ') {
       newGame();
     }
   }
-  if (gameState == GAMEWON) {
-    //drawGameWonScreen();
+/*  if (gameState == GAMEWON) {
     if ( keyPressed && key == ' ') {
       newGame();
     }
-  }
+  }*/
+  //update enemies and player
   if (gameState==GAMERUNNING) {
     player.updatePlayer();
     for (Enemy enemy : enemies) {
@@ -348,52 +353,48 @@ void draw() {
       drawGameWonScreen();
       return;
     }
+    //increase playing time every secon
     time+=1/frameRate;
     //light cone gets smaller over time
     brightness-=8/frameRate;
-    //if light cone is gone gameover
+    //decrease flashlight timer
     if (flashlightTimer > 0) {
       flashlightTimer-= 1/frameRate;
+      //if flashlight timer is 0 set brightness to previous brightness
       if (flashlightTimer <= 0) {
         brightness = saveBrightness;
       }
     }
-
-    if (player.getLives() <= 0) {
+    // if  all lives are gone or brightness is too small game over
+    if (player.getLives() <= 0 || brightness <= 20) {
       gameState = GAMEOVER;
-      startTimer = 0.5;
+   //   startTimer = 0.5;
       brightness = 1000;
       drawGameOverScreen();
       return;
     }
-
-    if (brightness <= 20) {
-      gameState = GAMEOVER;
-      startTimer = 0.5;
-      // set brightness high so player can see map in gameover screen
-      brightness = 1000;
-      drawGameOverScreen();
-      return;
-    }
+    // centers screeen on player
     screenLeftX = player.getPlayerX() - width/2;
     screenTopY  = player.getPlayerY() - height/2;
 
     background(0);
-
+    //draws Map
     drawMap();
-    // image(playerImg, player.playerX - screenLeftX, player.playerY - screenTopY, playerImg.width, playerImg.height);
+    // draws player
     player.drawPlayer(screenLeftX, screenTopY);
+    // draws enemies
     for (Enemy enemy : enemies) {
       enemy.drawEnemy(screenLeftX, screenTopY);
     }
+    
     drawLightcone();
-    drawText(); 
+    drawText();
   }
-  if (helpTimer >= 0) {
+ /* if (helpTimer >= 0) {
     helpTimer -= 1/frameRate;
   }
 
   if (startTimer >= 0) {
     helpTimer -= 1/frameRate;
-  }
+  }*/
 }
