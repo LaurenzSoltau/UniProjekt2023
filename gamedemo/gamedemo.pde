@@ -1,3 +1,4 @@
+import processing.sound.*;
 Map map;
 Player player;
 Enemy enemy;
@@ -8,6 +9,8 @@ PImage helpScreen;
 PImage playerImg;
 PImage enemyImg;
 PImage backgroundImg;
+public SoundFile music;
+public SoundFile hitSound;
 
 ArrayList<Enemy> enemies;
 
@@ -38,11 +41,14 @@ int gameState;
 
 void setup() {
   size(900, 768);
+  ellipseMode(CORNER);
   playerImg = loadImage("data/images/player.png");
   enemyImg = loadImage("data/images/spider.png");
   spiderRight = loadImage("data/images/spiderRight.png");
   spiderLeft= loadImage("data/images/spiderLeft.png");
   helpScreen= loadImage("data/images/helpScreen.png");
+  music = new SoundFile(this, "music.mp3");
+  hitSound = new SoundFile(this, "hit.mp3");
 
   highscore = new Table();
   highscore.addColumn("date");
@@ -54,6 +60,7 @@ void setup() {
 // function that starts a new game by creating the map and player object and setting starting position of the player and
 // the position of the goal. Also is sets the gametimer to zero and the state to waiting to wait until player presses a key
 void newGame () {
+  music.loop();
   map = new Map( "demo.map");
   player = new Player(playerImg, 150, map);
   enemies = new ArrayList<Enemy>();
@@ -87,20 +94,24 @@ void newGame () {
   player.setPlayerVX(0);
   player.setPlayerVY(0);
   brightness = 100;
-  
-//  gameState = START;
+
+  //  gameState = START;
 }
 
 // control of player
 void keyPressed() {
   if ( keyCode == UP || key == 'w') {
     player.setPlayerVY(-1);
+    player.setDirection("u");
   } else if ( keyCode == DOWN || key == 's') {
     player.setPlayerVY(1);
+    player.setDirection("d");
   } else if ( keyCode == LEFT || key == 'a') {
     player.setPlayerVX(-1);
+    player.setDirection("l");
   } else if ( keyCode == RIGHT || key == 'd') {
     player.setPlayerVX(1);
+    player.setDirection("r");
   }
 }
 //control of player
@@ -132,6 +143,7 @@ void drawText() {
   fill(#930C0C);
   textSize(40);
   text("Lives: " +player.getLives(), 100, 50);
+  text("Bullets: " + player.getBullets(), 250, 50);
   text("Time: "+round(time), width-100, 50);
   text("Flashlight: "+round(flashlightTimer), width/2, 50);
 }
@@ -239,9 +251,9 @@ void drawHelpScreen() {
   fill(#930C0C);
   image(helpScreen, 50, 100, helpScreen.width*1.2, helpScreen.height*1.2);
   if (keyPressed && key == 'b' ) {
-   //   helpTimer = 0.5;
-      gameState = START;
-    }
+    //   helpTimer = 0.5;
+    gameState = START;
+  }
 }
 // Draws Game Over Screen
 void drawGameOverScreen() {
@@ -320,7 +332,7 @@ void draw() {
     }
     //got to helpscreen if h is pressed
     if (keyPressed && key == 'h' ) {
-   //   helpTimer = 0.5;
+      //   helpTimer = 0.5;
       gameState = HELP;
     }
   }
@@ -328,27 +340,35 @@ void draw() {
   if (gameState == HELP) {
     drawHelpScreen();
   }
-  
+
   if (gameState == GAMEOVER || gameState == GAMEWON) {
     if ( keyPressed && key == 'r') {
       newGame();
       gameState = GAMERUNNING;
     }
   }
-/*  if (gameState == GAMEWON) {
-    if ( keyPressed && key == ' ') {
-      newGame();
-    }
-  }*/
+  /*  if (gameState == GAMEWON) {
+   if ( keyPressed && key == ' ') {
+   newGame();
+   }
+   }*/
   //update enemies and player
   if (gameState==GAMERUNNING) {
     player.updatePlayer();
+    ArrayList<Enemy> enemyRemoves = new ArrayList<Enemy>();
     for (Enemy enemy : enemies) {
       enemy.updateEnemy();
+      enemy.checkCollisionBullets(player.getBulletList());
       if (enemy.checkCollision(player)) {
         player.gotHit();
       }
+      if (enemy.getLives() < 1) {
+        enemyRemoves.add(enemy);
+      }
     }
+    enemies.removeAll(enemyRemoves);
+    
+    // handle bullets
     boolean isWin = checkForEffectTile();
     if (isWin) {
       gameState = GAMEWON;
@@ -370,9 +390,10 @@ void draw() {
     // if  all lives are gone or brightness is too small game over
     if (player.getLives() <= 0 || brightness <= 20) {
       gameState = GAMEOVER;
-   //   startTimer = 0.5;
+      //   startTimer = 0.5;
       brightness = 1000;
       drawGameOverScreen();
+      music.stop();
       return;
     }
     // centers screeen on player
@@ -388,7 +409,16 @@ void draw() {
     for (Enemy enemy : enemies) {
       enemy.drawEnemy(screenLeftX, screenTopY);
     }
-    
+    ArrayList<Bullet> removes = new ArrayList<Bullet>();
+    for (Bullet bullet : player.getBulletList()) {
+      if (bullet.getIsDestroyed()) {
+        removes.add(bullet);
+      }
+      bullet.updateBullet();
+      bullet.drawBullet(screenLeftX, screenTopY);
+    }
+    player.getBulletList().removeAll(removes);
+
     drawLightcone();
     drawText();
   }

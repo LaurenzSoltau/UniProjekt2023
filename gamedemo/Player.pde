@@ -5,6 +5,12 @@ class Player {
   // lives
   private int lives;
   private float damageTimer;
+  // saves direction player looks in u = up, d = down, l = left, r = right
+  private String direction;
+  private ArrayList<Bullet> bulletList;
+
+  private int bullets;
+  private float reloadTimer;
 
   private Map map;
   // verlocity of player in both directions
@@ -21,7 +27,7 @@ class Player {
 
 
   public Player(PImage playerImg, float playerSpeed, Map map) {
-    // construct a new Player object and set default values. Speed can be set by the parameter.
+    // construct a new Player object and set default values. Speed can be set by the parameter.´
     this.playerX = 0;
     this.playerY = 0;
     this.playerVX = 0;
@@ -29,9 +35,12 @@ class Player {
     this.playerSpeed = playerSpeed;
 
     this.map = map;
+    this.bullets = 0;
+    this.reloadTimer = 5;
     this.lives = 3;
     this.damageTimer = 0;
     this.playerImg = playerImg;
+    this.bulletList = new ArrayList<Bullet>();
   }
 
 
@@ -42,7 +51,19 @@ class Player {
     }
     if (damageTimer >= 0 && damageTimer <= 0.8) {
       isTint = false;
-      // has to be implemented
+    }
+    if (reloadTimer >= 0) {
+      reloadTimer -= 1/frameRate;
+    }
+    if (reloadTimer < 0 && bullets < 3) {
+      bullets++;
+      reloadTimer = 5;
+    }
+    if (keyPressed && key == ' ') {
+      if (bullets > 0) {
+        shootBullet();
+        bullets--;
+      }
     }
     float nextX = playerX + playerVX/frameRate;
     float nextY = playerY + playerVY/frameRate;
@@ -59,11 +80,19 @@ class Player {
 
   void gotHit() {
     if (damageTimer <= 0) {
+      hitSound.play();
       damageTimer = 1;
       isTint = true;
       lives -= 1;
     }
   }
+
+  private void shootBullet() {
+    Bullet newBullet = new Bullet(playerX, playerY, direction, map);
+    bulletList.add(newBullet);
+    print("test");
+  }
+
   void drawPlayer(float screenLeftX, float screenTopY) {
     // draw player
     if (isTint) {
@@ -75,6 +104,10 @@ class Player {
   }
 
   //setter and getter
+  public int getBullets() {
+    return this.bullets;
+  }
+
   public int getLives() {
     return this.lives;
   }
@@ -95,6 +128,10 @@ class Player {
     return this.playerVY;
   }
 
+  public ArrayList<Bullet> getBulletList() {
+    return this.bulletList;
+  }
+
   public void setPlayerX(float x) {
     this.playerX = x;
   }
@@ -109,5 +146,9 @@ class Player {
 
   public void setPlayerVY(float multi) {
     this.playerVY = abs(playerSpeed) * multi;
+  }
+
+  public void setDirection(String direction) {
+    this.direction = direction;
   }
 }

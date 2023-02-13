@@ -8,6 +8,8 @@ class Enemy {
   // velocity of enemy in both directions
   private float velocityX;
   private float velocityY;
+  private int lives;
+  private float damageCooldown;
 
   //enemy image
   public PImage enemyImg;
@@ -18,6 +20,7 @@ class Enemy {
     this.posX = spawnX * map.tileSize + map.tileSize/2;
     this.posY = spawnY * map.tileSize + map.tileSize/2;
     this.enemyImg = enemyImg;
+    this.lives = 2;
     if (direction == 'x') {
       this.velocityX = enemySpeed;
       this.velocityY = 0;
@@ -34,6 +37,22 @@ class Enemy {
 
       return true;
     } else return false;
+  }
+
+  public void checkCollisionBullets(ArrayList<Bullet> bullets) {
+    for (Bullet bullet : bullets) {
+      float bulletPosX = bullet.getPosX();
+      float bulletPosY = bullet.getPosY();
+      float w = bullet.getRadius();
+      float h = bullet.getRadius();
+      if (bulletPosX + w >=posX-enemyImg.width/2  && bulletPosY + h >= posY-enemyImg.height/2  && bulletPosY - h  <=posY + enemyImg.height/2  && bulletPosX - h <= posX + enemyImg.width/2) {
+        if (damageCooldown <= 0) {
+          lives--;
+          damageCooldown = 1;
+        }
+        bullet.setIsDestroyed(true);
+      }
+    }
   }
 
   /*  public boolean checkCollision(Player player) {
@@ -59,6 +78,9 @@ class Enemy {
    }*/
 
   public void updateEnemy() {
+    if (damageCooldown >= 0) {
+      damageCooldown -= 1/frameRate;
+    }
     // calculate x and y position in the next frame
     float nextPosX = posX + velocityX / frameRate;
     float nextPosY = posY + velocityY / frameRate;
@@ -75,5 +97,9 @@ class Enemy {
   // draw enemy
   void drawEnemy(float screenLeftX, float screenTopY) {
     image( enemyImg, posX - screenLeftX-enemyImg.width/2, posY - screenTopY-enemyImg.height/2, enemyImg.width, enemyImg.height );
+  }
+
+  public int getLives() {
+    return this.lives;
   }
 }
