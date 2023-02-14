@@ -249,7 +249,7 @@ void drawStartScreen() {
 void drawHelpScreen() {
   background(0);
   fill(#930C0C);
-  image(helpScreen, 50, 100, helpScreen.width*1.2, helpScreen.height*1.2);
+  image(helpScreen, 50, 100, helpScreen.width, helpScreen.height);
   if (keyPressed && key == 'b' ) {
     //   helpTimer = 0.5;
     gameState = START;
@@ -277,7 +277,6 @@ void drawGameOverScreen() {
 public void drawGameWonScreen() {
   background(0);
   fill(#930C0C);
-
   textSize(80);
   text("YOU SURVIVED", 450, 150);
   textSize(30);

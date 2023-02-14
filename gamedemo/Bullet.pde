@@ -43,7 +43,7 @@ class Bullet {
   }
 
   public void drawBullet(float screenLeftX, float screenTopY) {
-    fill(255, 0, 0);
+    fill(#930C0C);
     circle(posX - screenLeftX, posY - screenTopY, radius);
   }
 
