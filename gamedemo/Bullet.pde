@@ -7,7 +7,7 @@ class Bullet {
   private Map map;
   private boolean isDestroyed;
 
-  // construct 
+  // construct a bullet with position and direction
   public Bullet(float posX, float posY, String direction, Map map) {
     this.posX = posX;
     this.posY = posY;
@@ -15,6 +15,7 @@ class Bullet {
     this.map = map;
     this.isDestroyed = false;
 
+    // set the velocity according to the direction the player was looking in
     if (direction == "u") {
       velocityX = 0;
       velocityY = -200;
@@ -30,6 +31,7 @@ class Bullet {
     }
   }
 
+  // update the position of the bullet, and check if it is collided with a wall.
   public void updateBullet() {
     float nextPosX = posX + velocityX / frameRate;
     float nextPosY = posY + velocityY / frameRate;
@@ -43,11 +45,13 @@ class Bullet {
     posY = nextPosY;
   }
 
+  // draw the bullet to the screen
   public void drawBullet(float screenLeftX, float screenTopY) {
     fill(#930C0C);
     circle(posX - screenLeftX, posY - screenTopY, radius);
   }
 
+  // getter and setter
   public boolean getIsDestroyed() {
     return this.isDestroyed;
   }

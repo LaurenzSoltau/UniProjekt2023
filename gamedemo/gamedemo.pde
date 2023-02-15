@@ -1,45 +1,41 @@
 import processing.sound.*;
-Map map;
-Player player;
-Enemy enemy;
-
-PImage spiderRight;
-PImage spiderLeft;
-PImage helpScreen;
-PImage playerImg;
-PImage enemyImg;
-PImage backgroundImg;
+// public variables
+public Map map;
+public Player player;
+public Enemy enemy;
 public SoundFile music;
 public SoundFile hitSound;
-
-ArrayList<Enemy> enemies;
-
-Table highscore;
-
 // Position of the goal center
 // Will be set by restart
-float goalX=0, goalY=0;
+public float goalX=0, goalY=0;
+
+
+private PImage spiderRight;
+private PImage spiderLeft;
+private PImage helpScreen;
+private PImage playerImg;
+private PImage enemyImg;
+private ArrayList<Enemy> enemies;
+private Table highscore;
 // left / top border of the screen in map coordinates
 // used for scrolling
-float screenLeftX, screenTopY;
+private float screenLeftX, screenTopY;
 //light cone around player
-float brightness;
+private float brightness;
 //Timer for flashlight object
-float flashlightTimer;
+private float flashlightTimer;
 //saves current brightness while flashlight óbject is used
-float saveBrightness;
-
-float helpTimer;
-float startTimer;
+private float saveBrightness;
 //Timer for player
-float time;
+private float time;
 //Game States
-int START=0, GAMERUNNING=1, GAMEOVER=2, GAMEWON=3, HELP=4, HIGHSCORES=5;
-int gameState;
+private int START=0, GAMERUNNING=1, GAMEOVER=2, GAMEWON=3, HELP=4;
+private int gameState;
 
 
 
 void setup() {
+  // initialize values Images and Soundfiles
   size(900, 768);
   ellipseMode(CORNER);
   playerImg = loadImage("data/images/player.png");
@@ -53,7 +49,7 @@ void setup() {
   highscore = new Table();
   highscore.addColumn("date");
   highscore.addColumn("time");
-
+  // start a new Game
   newGame();
 }
 
@@ -114,7 +110,7 @@ void keyPressed() {
     player.setDirection("r");
   }
 }
-//control of player
+//control of player needed for cleaner movement
 void keyReleased() {
   if (keyCode == UP || keyCode == DOWN || key == 'w' || key == 's') {
     player.setPlayerVY(0);
@@ -366,7 +362,7 @@ void draw() {
       }
     }
     enemies.removeAll(enemyRemoves);
-    
+
     // handle bullets
     boolean isWin = checkForEffectTile();
     if (isWin) {
@@ -408,14 +404,20 @@ void draw() {
     for (Enemy enemy : enemies) {
       enemy.drawEnemy(screenLeftX, screenTopY);
     }
+    // updates, draws and removes old bullets
+    // temp List to store all the bullets  which have to be removed
     ArrayList<Bullet> removes = new ArrayList<Bullet>();
+    // loop through all the urrent bullets
     for (Bullet bullet : player.getBulletList()) {
+      // if bullet should be destroyed, add it to removes list
       if (bullet.getIsDestroyed()) {
         removes.add(bullet);
       }
+      // update the bullets and draw them
       bullet.updateBullet();
       bullet.drawBullet(screenLeftX, screenTopY);
     }
+    // delete all bullets from the real bullet list, which have been added to removes before
     player.getBulletList().removeAll(removes);
 
     drawLightcone();
