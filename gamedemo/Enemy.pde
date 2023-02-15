@@ -39,6 +39,8 @@ class Enemy {
     } else return false;
   }
 
+  // check if the enemy collided with a bullet, and if yes reduce its live.
+  // also set the bullet to isDestroyed, so it will get destroyed in the main program
   public void checkCollisionBullets(ArrayList<Bullet> bullets) {
     for (Bullet bullet : bullets) {
       float bulletPosX = bullet.getPosX();
@@ -54,29 +56,7 @@ class Enemy {
       }
     }
   }
-
-  /*  public boolean checkCollision(Player player) {
-   float testX = player.getPlayerX();
-   float testY = player.getPlayerY();
-   if (posX < player.getPlayerX()-player.getPlayerX()+playerImg.width/2) {
-   testX = player.getPlayerX()-player.playerImg.width/2;
-   } else if (posX > player.getPlayerX()+player.playerImg.width/2) {
-   testX = player.getPlayerX()+player.playerImg.width/2;
-   }
-   if (posY < player.getPlayerY()-player.playerImg.height/2) {
-   testY = player.getPlayerY()-player.playerImg.height/2;
-   } else if (posY > player.getPlayerY()+player.playerImg.height/2) {
-   testY = player.getPlayerY()+player.playerImg.height/2;
-   }
-   
-   float distance = dist(posX, posY, testX, testY);
-   // collision detected
-   if (distance <= enemyImg.height/2) {
-   return true;
-   }
-   return false;
-   }*/
-
+  // calculate the new position of the enemy and reduce Cooldowns
   public void updateEnemy() {
     if (damageCooldown >= 0) {
       damageCooldown -= 1/frameRate;
@@ -94,11 +74,12 @@ class Enemy {
     posX = nextPosX;
     posY = nextPosY;
   }
-  // draw enemy
+  // draw enemy to the screen
   void drawEnemy(float screenLeftX, float screenTopY) {
     image( enemyImg, posX - screenLeftX-enemyImg.width/2, posY - screenTopY-enemyImg.height/2, enemyImg.width, enemyImg.height );
   }
 
+  // helper and setter methods
   public int getLives() {
     return this.lives;
   }

@@ -11,6 +11,7 @@ class Player {
 
   private int bullets;
   private float reloadTimer;
+  private float shootCooldown;
 
   private Map map;
   // verlocity of player in both directions
@@ -37,14 +38,20 @@ class Player {
     this.map = map;
     this.bullets = 0;
     this.reloadTimer = 5;
+    this.shootCooldown = 0.5;
     this.lives = 3;
     this.damageTimer = 0;
     this.playerImg = playerImg;
     this.bulletList = new ArrayList<Bullet>();
   }
 
-
+  // calculates the new position of the player and determines if hes shooting or not
+  // also decresing all the cooldown and timers
   public void updatePlayer() {
+    // reducing timers
+    if (shootCooldown >= 0) {
+      shootCooldown -= 1/frameRate;
+    }
     // update player position and returns an Array with the new xPos at index 0 and the yPos at index 1
     if (damageTimer >= 0) {
       damageTimer -= 1/frameRate;
@@ -59,12 +66,16 @@ class Player {
       bullets++;
       reloadTimer = 5;
     }
+    // handle shooting
     if (keyPressed && key == ' ') {
-      if (bullets > 0) {
-        shootBullet();
+      if (bullets > 0 && shootCooldown <= 0) {
         bullets--;
+        reloadTimer = 1;
+        shootBullet();
+        shootCooldown = 0.5;
       }
     }
+    // calculate next position
     float nextX = playerX + playerVX/frameRate;
     float nextY = playerY + playerVY/frameRate;
     if ( map.testTileInRect(nextX-playerImg.width/2, nextY-playerImg.height/2, playerImg.width, playerImg.height, "W" )) {
@@ -78,6 +89,7 @@ class Player {
     playerY = nextY;
   }
 
+  // gets executed when player is hit, and checks if he can get damage
   void gotHit() {
     if (damageTimer <= 0) {
       hitSound.play();
@@ -87,12 +99,13 @@ class Player {
     }
   }
 
+  // handles the shooting of a single bullet.
   private void shootBullet() {
     Bullet newBullet = new Bullet(playerX, playerY, direction, map);
     bulletList.add(newBullet);
-    print("test");
   }
 
+  // draw the player to the screen
   void drawPlayer(float screenLeftX, float screenTopY) {
     // draw player
     if (isTint) {

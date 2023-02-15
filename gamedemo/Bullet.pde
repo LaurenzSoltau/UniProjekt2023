@@ -7,6 +7,7 @@ class Bullet {
   private Map map;
   private boolean isDestroyed;
 
+  // construct 
   public Bullet(float posX, float posY, String direction, Map map) {
     this.posX = posX;
     this.posY = posY;
