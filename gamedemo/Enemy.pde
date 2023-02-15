@@ -28,7 +28,6 @@ class Enemy {
       this.velocityY = enemySpeed;
       this.velocityX = 0;
     }
-    //  this.enemyR = 10;
     this.map = map;
   }
   // checks for collision with player, returs true if player is hit and false if not

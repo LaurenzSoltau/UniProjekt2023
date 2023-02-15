@@ -160,24 +160,21 @@ void drawLightcone() {
       float b = blue(pixels[loc]);
 
       // brightness based on players position
-      float distance = dist(x, y, player.getPlayerX()-screenLeftX, player.getPlayerY()-screenTopY);
+      float distanceFromPlayer = dist(x, y, player.getPlayerX()-screenLeftX, player.getPlayerY()-screenTopY);
 
       // map brigthness
+      float newBrightness = map(distanceFromPlayer, 0, brightness, 4, 0);
+      r *= newBrightness;
+      g *= newBrightness;
+      b *= newBrightness;
 
-      float adjustBrightness = map(distance, 0, brightness, 4, 0);
-      r *= adjustBrightness;
-      g *= adjustBrightness;
-      b *= adjustBrightness;
-
-
-      // constrain rgb to between 0 and 255
+      // constrain rgb value between 0 and 255
       r = constrain(r, 0, 255);
       g = constrain(g, 0, 255);
       b = constrain(b, 0, 255);
 
       // set new color
-      color c = color(r, g, b);
-      pixels[loc] = c;
+      pixels[loc] = color(r,g,b);
     }
   }
 
@@ -247,7 +244,6 @@ void drawHelpScreen() {
   fill(#930C0C);
   image(helpScreen, 50, 100, helpScreen.width, helpScreen.height);
   if (keyPressed && key == 'b' ) {
-    //   helpTimer = 0.5;
     gameState = START;
   }
 }
@@ -317,7 +313,6 @@ void drawHighscore() {
 
 
 void draw() {
-  //
   if (gameState==START) {
     //draw startscreen
     drawStartScreen();
@@ -342,11 +337,6 @@ void draw() {
       gameState = GAMERUNNING;
     }
   }
-  /*  if (gameState == GAMEWON) {
-   if ( keyPressed && key == ' ') {
-   newGame();
-   }
-   }*/
   //update enemies and player
   if (gameState==GAMERUNNING) {
     player.updatePlayer();
